@@ -1,0 +1,383 @@
+[
+  {
+    "brandId": "lingdongyun",
+    "brandName": "灵动云",
+    "clashSupportStatus": "conditional_apply",
+    "clashBadge": "高阶/达标申请",
+    "hasOfficialClient": true,
+    "confirmedThirdParty": true,
+    "confirmedClash": true,
+    "platforms": {
+      "Windows": "官方客户端",
+      "macOS": "官方客户端",
+      "Android": "官方客户端",
+      "iOS": "Nextin（识别码 LDY）",
+      "Linux": "未获明确官方安装包记录"
+    },
+    "knownDeviceLimit": "常规套餐标注不限同时在线设备数量",
+    "supportedSubscriptionTypes": ["官方客户端账号登录", "客服审核发放第三方订阅（达标订单）"],
+    "compatibilityEvidence": "2026-11-24 客服规则记录：通用订阅非所有套餐默认提供，历史规则为破晓/凌霄可联系客服申请，2026-11-24 口径调整为订单金额达 ¥200 及以上可向在线客服申请特殊优先订阅。",
+    "applicablePlans": "官方客户端全套餐可用；第三方 Clash/Shadowrocket 订阅仅限联系客服核准的高阶或 ≥¥200 达标订单。",
+    "limitations": "拂风月付、穿云 ¥99/年包等低额订单不默认提供 Clash 通用订阅链接；未获取 Linux 官方客户端记录。",
+    "updatedAt": "2026-11-25"
+  },
+  {
+    "brandId": "muguang-jiasu",
+    "brandName": "暮光加速",
+    "clashSupportStatus": "unconfirmed",
+    "clashBadge": "未确认开放",
+    "hasOfficialClient": true,
+    "confirmedThirdParty": false,
+    "confirmedClash": false,
+    "platforms": {
+      "Windows": "用户中心指引",
+      "macOS": "用户中心指引",
+      "Android": "未获明确支持记录",
+      "iOS": "未获明确支持记录",
+      "Linux": "未获明确支持记录"
+    },
+    "knownDeviceLimit": "常规周期不限同时在线设备；不限时包或部分档位需以结算条款为准",
+    "supportedSubscriptionTypes": ["用户中心桌面配置与官方指引"],
+    "compatibilityEvidence": "2026-10-15 第三方订阅调查记录当时不提供通用订阅；2026-11-23 档案显示桌面端提供 Windows/macOS 说明，尚无解除限制的明确公告。",
+    "applicablePlans": "以登录后用户中心实际提供的客户端与配置为准。",
+    "limitations": "缺少面向全套餐开放 Clash/Shadowrocket 通用订阅的公开证据，不列入 Clash 默认可用推荐。",
+    "updatedAt": "2026-11-25"
+  },
+  {
+    "brandId": "breezenet",
+    "brandName": "微风网络",
+    "clashSupportStatus": "conditional_apply",
+    "clashBadge": "有教程/存在版本差异",
+    "hasOfficialClient": false,
+    "confirmedThirdParty": true,
+    "confirmedClash": true,
+    "platforms": {
+      "Windows": "教程提及 Clash Verge Rev / v2rayN",
+      "macOS": "兼容 VLESS 桌面客户端",
+      "Android": "兼容 VLESS 安卓客户端",
+      "iOS": "教程提及 Shadowrocket"
+    },
+    "knownDeviceLimit": "公开资料标注多设备可用，具体并发规则以后台为准",
+    "supportedSubscriptionTypes": ["VLESS 协议订阅（以当期后台发放为准）"],
+    "compatibilityEvidence": "2026-11 档案包含 Clash Verge Rev、v2rayN 与 Shadowrocket 的 VLESS 使用说明；但 2026-10-15 独立调查曾记未开放通用订阅，属存在来源时间差的有条件记录。",
+    "applicablePlans": "具体支持导出通用订阅的套餐范围须在购买前于用户中心核实。",
+    "limitations": "存在 10 月与 11 月来源记录差异，高度依赖 Clash 导出的用户请先向客服或后台确认当前订单权限。",
+    "updatedAt": "2026-11-25"
+  },
+  {
+    "brandId": "feimaoyun",
+    "brandName": "飞猫云",
+    "clashSupportStatus": "paused_third_party",
+    "clashBadge": "已暂停通用订阅",
+    "hasOfficialClient": true,
+    "confirmedThirdParty": false,
+    "confirmedClash": false,
+    "platforms": {
+      "Windows": "官方 Windows 客户端",
+      "macOS": "官方 macOS 客户端",
+      "Android": "官方 APK（平台知识库下载）",
+      "iOS": "后台统一客户端指引"
+    },
+    "knownDeviceLimit": "学生版曾标注限制，常规周期以当期面板说明为准",
+    "supportedSubscriptionTypes": ["官方客户端账号登录"],
+    "compatibilityEvidence": "2026-10-01 后台公告转录明确暂停原有通用订阅链接，近期不支持 Clash/Shadowrocket 等第三方客户端，主推官方客户端。",
+    "applicablePlans": "全套餐按官方客户端路径接入。",
+    "limitations": "未见解除第三方订阅暂停的可靠新公告，不可预设用于 Clash 或 OpenClash。",
+    "updatedAt": "2026-11-25"
+  },
+  {
+    "brandId": "yinxingren",
+    "brandName": "隐形人",
+    "clashSupportStatus": "unconfirmed",
+    "clashBadge": "未获官方确认",
+    "hasOfficialClient": true,
+    "confirmedThirdParty": false,
+    "confirmedClash": false,
+    "platforms": {
+      "Windows": "后台下载入口",
+      "macOS": "后台下载入口",
+      "Android": "后台下载入口",
+      "iOS": "后台下载与配置引导"
+    },
+    "knownDeviceLimit": "常规周期标注不限设备；2026-11-06 记录提示一次性包曾见 1/2/3 台设备限制差异",
+    "supportedSubscriptionTypes": ["用户中心下载中心客户端"],
+    "compatibilityEvidence": "2026-11-06 后台列有四端下载入口，但后台记录未确认可导出 Clash/Shadowrocket 通用订阅，不可仅凭第三方宣传推定。",
+    "applicablePlans": "以注册登录后用户中心下载中心及帮助文档说明为准。",
+    "limitations": "缺少可导出 Clash 订阅链接的官方确认证据。",
+    "updatedAt": "2026-11-25"
+  },
+  {
+    "brandId": "flyv",
+    "brandName": "FLYV",
+    "clashSupportStatus": "conditional_apply",
+    "clashBadge": "主推官方/部分记录兼容",
+    "hasOfficialClient": true,
+    "confirmedThirdParty": true,
+    "confirmedClash": false,
+    "platforms": {
+      "Windows": "品牌教程导航",
+      "macOS": "品牌教程导航",
+      "Android": "品牌教程导航",
+      "iOS": "品牌教程导航"
+    },
+    "knownDeviceLimit": "常规套餐标注不限同时在线设备数量",
+    "supportedSubscriptionTypes": ["品牌官方教程导航客户端", "第三方提及兼容（未获全套餐承诺）"],
+    "compatibilityEvidence": "2026-11 品牌展示站提供四端教程导航且主推官方客户端；部分第三方资料提及兼容 Clash/Shadowrocket/v2rayN，但未获得全套餐统一导入承诺。",
+    "applicablePlans": "官方路径全套餐可用；第三方通用订阅以用户中心当期规则为准。",
+    "limitations": "未提供逐档绑定的 Clash 官方导入承诺，购前若需导出订阅应联系用户中心客服确认。",
+    "updatedAt": "2026-11-25"
+  },
+  {
+    "brandId": "wavenet",
+    "brandName": "浪网",
+    "clashSupportStatus": "unconfirmed",
+    "clashBadge": "未获Clash公开保证",
+    "hasOfficialClient": true,
+    "confirmedThirdParty": true,
+    "confirmedClash": false,
+    "platforms": {
+      "Windows": "后台客户端或配置指引",
+      "macOS": "后台客户端或配置指引",
+      "Android": "资料推荐 v2rayNG",
+      "iOS": "资料推荐 Nextin（后台取识别码）"
+    },
+    "knownDeviceLimit": "公开资料标注不限设备（定制档按专属条款）",
+    "supportedSubscriptionTypes": ["后台客户端指引", "Android v2rayNG / iOS Nextin"],
+    "compatibilityEvidence": "2026-11 档案显示 Android 推荐 v2rayNG、iOS 推荐 Nextin，但公开资料未清楚说明是否允许通用 Clash 订阅。",
+    "applicablePlans": "按用户中心后台提供的对应平台客户端路径接入。",
+    "limitations": "不能将「推荐 v2rayNG」直接等同于支持 Clash 全格式 YAML 订阅。",
+    "updatedAt": "2026-11-25"
+  },
+  {
+    "brandId": "wuyou",
+    "brandName": "无忧链接",
+    "clashSupportStatus": "official_only",
+    "clashBadge": "新订单仅官方客户端",
+    "hasOfficialClient": true,
+    "confirmedThirdParty": false,
+    "confirmedClash": false,
+    "platforms": {
+      "Windows": "官方专属客户端",
+      "macOS": "官方专属客户端",
+      "Android": "官方专属客户端",
+      "iOS": "官方客户端指引"
+    },
+    "knownDeviceLimit": "常规套餐并发设备上限以用户中心条款为准",
+    "supportedSubscriptionTypes": ["官方专属客户端账号登录（2026-10起新订单）"],
+    "compatibilityEvidence": "2026-10 重要变更记录：新订单改用官方专属客户端登录，不提供订阅链接，不再保证支持 Clash、Shadowrocket 等第三方客户端（仅老用户原有订阅保留）。",
+    "applicablePlans": "所有新购订单均适用官方专属客户端方案。",
+    "limitations": "新购用户不再开放通用订阅链接，不支持导入 Clash、OpenClash 或小火箭。",
+    "updatedAt": "2026-11-25"
+  },
+  {
+    "brandId": "firefly",
+    "brandName": "Firefly",
+    "clashSupportStatus": "official_only",
+    "clashBadge": "新订单仅官方客户端",
+    "hasOfficialClient": true,
+    "confirmedThirdParty": false,
+    "confirmedClash": false,
+    "platforms": {
+      "Windows": "官方专属客户端",
+      "macOS": "官方专属客户端",
+      "Android": "官方专属客户端",
+      "iOS": "官方客户端指引"
+    },
+    "knownDeviceLimit": "并发与多设备策略以官方客户端登录限制为准",
+    "supportedSubscriptionTypes": ["官方专属客户端账号登录（2026-10起新订单）"],
+    "compatibilityEvidence": "2026-10 起新订单切换官方专属客户端，不提供第三方订阅链接，不再保证支持 Clash 与 Shadowrocket（老用户原有订阅保留）。",
+    "applicablePlans": "2026-10 之后的新订单仅保证官方专属客户端可用。",
+    "limitations": "部分历史导航站仍保留旧版第三方教程，与 2026-10 后新订单政策存在差异；新购切勿预设支持 Clash。",
+    "updatedAt": "2026-11-25"
+  },
+  {
+    "brandId": "quanqiuyun",
+    "brandName": "全球云",
+    "clashSupportStatus": "conditional_apply",
+    "clashBadge": "含Clash/v2rayN教程记录",
+    "hasOfficialClient": true,
+    "confirmedThirdParty": true,
+    "confirmedClash": true,
+    "platforms": {
+      "Windows": "教程提及 Clash Verge Rev / v2rayN",
+      "macOS": "兼容 VLESS 桌面客户端",
+      "Android": "兼容 VLESS 安卓客户端",
+      "iOS": "教程提及 Shadowrocket"
+    },
+    "knownDeviceLimit": "常规套餐支持多设备使用，并发数以用户中心为准",
+    "supportedSubscriptionTypes": ["用户中心订阅导入（视具体套餐权限）", "官方客户端说明"],
+    "compatibilityEvidence": "2026-11-17 档案记录用户后台教程涵盖 Clash Verge Rev、v2rayN 与 Shadowrocket；同时部分行业资料提及专属客户端，开放状态以套餐后台为准。",
+    "applicablePlans": "实际是否全档位开放第三方订阅须登录后在用户中心确认。",
+    "limitations": "协议文案存在 VLESS 与 SS 混写差异，建议导入时核对内核版本是否支持 VLESS。",
+    "updatedAt": "2026-11-25"
+  },
+  {
+    "brandId": "v2yun",
+    "brandName": "唯兔云",
+    "clashSupportStatus": "paused_third_party",
+    "clashBadge": "暂停通用订阅",
+    "hasOfficialClient": true,
+    "confirmedThirdParty": false,
+    "confirmedClash": false,
+    "platforms": {
+      "Windows": "官方 Windows 客户端指引",
+      "macOS": "官方 macOS 客户端指引",
+      "Android": "统一安卓客户端",
+      "iOS": "后台统一 iOS 客户端指引"
+    },
+    "knownDeviceLimit": "常规套餐支持多终端登录，并发上限以后台规则为准",
+    "supportedSubscriptionTypes": ["官方/统一客户端登录"],
+    "compatibilityEvidence": "2026-10-01 与 2026-10-28 后台记录显示暂时关闭通用订阅按钮，不支持 Clash/Shadowrocket 等第三方客户端，旧小火箭订阅可能停用。",
+    "applicablePlans": "当前应以官方/统一客户端方式接入全线套餐。",
+    "limitations": "暂停通用订阅期间不支持新建 Clash 或 Shadowrocket 订阅导入。",
+    "updatedAt": "2026-11-25"
+  },
+  {
+    "brandId": "lingmao",
+    "brandName": "灵猫",
+    "clashSupportStatus": "paused_third_party",
+    "clashBadge": "暂停第三方订阅",
+    "hasOfficialClient": true,
+    "confirmedThirdParty": false,
+    "confirmedClash": false,
+    "platforms": {
+      "Windows": "灵猫专属客户端 (Windows 10+)",
+      "macOS": "灵猫专属客户端 (macOS 10.15+)",
+      "Android": "官方 Android 客户端",
+      "iOS": "Nextin（识别码 lmwl）"
+    },
+    "knownDeviceLimit": "多端登录策略以官方客户端后台账户为准",
+    "supportedSubscriptionTypes": ["专属客户端登录 / iOS Nextin"],
+    "compatibilityEvidence": "2026-11-05 后台公告转述：暂时关闭原有订阅链接，近期不支持 Clash/Shadowrocket 等第三方客户端；2026-11-12 后台核对列明专属客户端与 iOS Nextin (lmwl)。",
+    "applicablePlans": "全套餐需使用灵猫专属客户端或 Nextin 接入。",
+    "limitations": "新购用户不可预设能使用 Clash 或小火箭订阅。",
+    "updatedAt": "2026-11-25"
+  },
+  {
+    "brandId": "flashleap",
+    "brandName": "闪跃",
+    "clashSupportStatus": "official_only",
+    "clashBadge": "新订单仅官方客户端",
+    "hasOfficialClient": true,
+    "confirmedThirdParty": false,
+    "confirmedClash": false,
+    "platforms": {
+      "Windows": "官方客户端 (Windows 10+)",
+      "macOS": "官方客户端 (macOS 10.15+)",
+      "Android": "官方 APK (Android 5.0+)",
+      "iOS": "Nextin（iOS 12.0+，识别码 sywl）"
+    },
+    "knownDeviceLimit": "支持多端登录，具体并发数以用户中心规则为准",
+    "supportedSubscriptionTypes": ["官方专属客户端 / iOS Nextin（新订单）"],
+    "compatibilityEvidence": "2026-10-20 与 2026-11-06 档案核对：2026 年 10 月起新订单改用官方专属客户端及 iOS Nextin（识别码 sywl），不提供通用订阅链接（或需特别核实老订单）。",
+    "applicablePlans": "2026 年 10 月起新购订单主推官方专属客户端。",
+    "limitations": "新订单不再保证 Clash 与 Shadowrocket 通用订阅导入。",
+    "updatedAt": "2026-11-25"
+  },
+  {
+    "brandId": "laddercloud",
+    "brandName": "梯子云",
+    "clashSupportStatus": "unconfirmed",
+    "clashBadge": "未获Clash公开保证",
+    "hasOfficialClient": true,
+    "confirmedThirdParty": false,
+    "confirmedClash": false,
+    "platforms": {
+      "Windows": "用户中心客户端与指南",
+      "macOS": "用户中心客户端与指南",
+      "Android": "用户中心指定 Android 客户端",
+      "iOS": "用户中心指定 iOS App 与识别配置"
+    },
+    "knownDeviceLimit": "并发设备限制以用户中心当期商品说明为准",
+    "supportedSubscriptionTypes": ["用户中心官方客户端及配置指引"],
+    "compatibilityEvidence": "2026-10 客户端评估资料未确认官方全面开放 Clash 订阅；2026-11-17 档案指出 iOS 与各端需以梯子云自身后台提示为准。",
+    "applicablePlans": "全套餐需登录后遵循用户中心客户端指引。",
+    "limitations": "缺少可自由导出 Clash 通用订阅的公开证明。",
+    "updatedAt": "2026-11-25"
+  },
+  {
+    "brandId": "lightspeed",
+    "brandName": "光速云",
+    "clashSupportStatus": "official_only",
+    "clashBadge": "主推全平台官方客户端",
+    "hasOfficialClient": true,
+    "confirmedThirdParty": false,
+    "confirmedClash": false,
+    "platforms": {
+      "Windows": "官方客户端（仅限官网下载）",
+      "macOS": "官方客户端（仅限官网下载）",
+      "Android": "官方客户端（仅限官网下载）",
+      "iOS": "官方客户端指引",
+      "Linux": "原稿列明支持 Linux 官方客户端"
+    },
+    "knownDeviceLimit": "原稿与补充截图均标注不限同时在线设备数量",
+    "supportedSubscriptionTypes": ["全平台官方客户端账号登录"],
+    "compatibilityEvidence": "《19_光速云》原稿第五节明确声明：官方客户端支持 Win/macOS/iOS/Android/Linux；为防订阅外泄，不推荐导出订阅链接或使用 Clash/小火箭等第三方客户端。",
+    "applicablePlans": "全线套餐适用官方客户端直连模式。",
+    "limitations": "官方不推荐第三方 Clash/Shadowrocket 订阅，需要路由级透明代理的进阶用户应提前评估。",
+    "updatedAt": "2026-11-25"
+  },
+  {
+    "brandId": "u1s1",
+    "brandName": "U1S1",
+    "clashSupportStatus": "verified_tutorial",
+    "clashBadge": "后台支持订阅导入教程",
+    "hasOfficialClient": false,
+    "confirmedThirdParty": true,
+    "confirmedClash": true,
+    "platforms": {
+      "Windows": "教程支持 Clash Verge Rev / v2rayN",
+      "macOS": "兼容 VLESS 桌面客户端",
+      "Android": "教程推荐 Clash Meta for Android",
+      "iOS": "教程推荐 Shadowrocket"
+    },
+    "knownDeviceLimit": "并发设备数以用户中心具体套餐规则为准",
+    "supportedSubscriptionTypes": ["用户后台复制订阅链接导入第三方客户端"],
+    "compatibilityEvidence": "2026-11-17 档案第十节明确记载：公开用户后台教程支持复制订阅链接导入兼容客户端（Clash Verge Rev、v2rayN、Clash Meta for Android、Shadowrocket），节点样本为 VLESS。",
+    "applicablePlans": "虽然后台教程支持导入，但仍无全档逐一清单，高价值订单前建议登录后台复核订阅格式。",
+    "limitations": "未提供 Linux 与路由器专属官方教程；套餐说明出现 SS 与 VLESS 双提法，应以实际下发配置与支持 VLESS 的新版内核为准。",
+    "updatedAt": "2026-11-25"
+  },
+  {
+    "brandId": "sogoyun",
+    "brandName": "Sogo云",
+    "clashSupportStatus": "official_only",
+    "clashBadge": "主推四端官方客户端",
+    "hasOfficialClient": true,
+    "confirmedThirdParty": false,
+    "confirmedClash": false,
+    "platforms": {
+      "Windows": "官方 Windows 客户端",
+      "macOS": "官方 macOS 客户端",
+      "Android": "官方 Android 客户端",
+      "iOS": "官方 iOS 客户端"
+    },
+    "knownDeviceLimit": "多端使用限制以用户中心当期商品说明为准",
+    "supportedSubscriptionTypes": ["官方客户端账号登录"],
+    "compatibilityEvidence": "2026-11-21 档案记录品牌展示页主推 Windows/macOS/Android/iOS 官方客户端下载，未见可独立验证的统一第三方 Clash 订阅开放说明。",
+    "applicablePlans": "全套餐均可通过官方客户端登录使用。",
+    "limitations": "未获得第三方 Clash/Shadowrocket 通用订阅导入承诺。",
+    "updatedAt": "2026-11-25"
+  },
+  {
+    "brandId": "kuajie",
+    "brandName": "跨界",
+    "clashSupportStatus": "conditional_apply",
+    "clashBadge": "存在双版本政策记录",
+    "hasOfficialClient": true,
+    "confirmedThirdParty": true,
+    "confirmedClash": true,
+    "platforms": {
+      "Windows": "教程列 Clash Verge Rev / v2rayN（亦有官方客户端记录）",
+      "macOS": "兼容 Clash 系桌面客户端 / 官方客户端",
+      "Android": "Clash Meta for Android / v2rayNG / 官方客户端",
+      "iOS": "教程提及 Shadowrocket / 官方指引"
+    },
+    "knownDeviceLimit": "常规套餐并发设备限制以用户中心为准",
+    "supportedSubscriptionTypes": ["官方专属客户端", "向商家/客服索取通用订阅（存在政策版本差异）"],
+    "compatibilityEvidence": "2026-10-19 调查曾更正可用通用订阅但需向商家索取，11 月档案亦有 Clash Verge Rev/v2rayN/Shadowrocket 指引；但 10 月亦有新订单切换官方客户端的变更记录。",
+    "applicablePlans": "由于存在政策切换双版本记录，下单前务必通过客服确认当期订单是否仍可索取 Clash 通用订阅。",
+    "limitations": "不能将旧教程直接视为无条件开放通用订阅。",
+    "updatedAt": "2026-11-25"
+  }
+]

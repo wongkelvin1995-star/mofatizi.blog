@@ -1,0 +1,387 @@
+---
+---
+
+<div
+  id="search-modal"
+  class="fixed inset-0 z-50 hidden items-start justify-center bg-[#252D49]/55 p-0 backdrop-blur-xs sm:p-6 md:pt-14"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="search-modal-title"
+>
+  <div class="flex h-full w-full flex-col overflow-hidden bg-white shadow-2xl sm:h-auto sm:max-h-[85vh] sm:max-w-3xl sm:rounded-2xl sm:border sm:border-[#E2E8F0]">
+    <!-- Top input bar -->
+    <div class="flex items-center gap-3 border-b border-[#E2E8F0] bg-[#F8FAFF] px-4 py-3 sm:px-5">
+      <svg class="h-5 w-5 shrink-0 text-[#7664D9]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
+      </svg>
+      <label for="modal-search-input" id="search-modal-title" class="sr-only">全站中文智能搜索</label>
+      <input
+        id="modal-search-input"
+        type="search"
+        autocomplete="off"
+        placeholder="搜品牌、客户端、Clash 教程或问题（如：灵动云、小火箭、Mihomo、TUN）"
+        class="h-11 w-full bg-transparent text-base text-[#252D49] placeholder:text-[#64748B] focus:outline-none"
+      />
+      <button
+        type="button"
+        id="close-search-modal"
+        aria-label="关闭搜索"
+        class="inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-xl border border-[#E2E8F0] bg-white px-3.5 text-sm font-semibold text-[#252D49] hover:bg-[#F0EBFF]"
+      >
+        关闭
+      </button>
+    </div>
+
+    <!-- Category filter pills -->
+    <div class="flex flex-wrap items-center gap-1.5 border-b border-[#E2E8F0] bg-white px-4 py-2.5 sm:px-5" id="modal-search-cats">
+      {[
+        { id: 'all', label: '全部' },
+        { id: 'brand', label: '机场品牌' },
+        { id: 'clash', label: 'Clash' },
+        { id: 'client', label: '客户端' },
+        { id: 'guide', label: '使用指南' },
+        { id: 'knowledge', label: '知识百科' },
+      ].map((cat, idx) => (
+        <button
+          type="button"
+          data-search-cat={cat.id}
+          class:list={[
+            'min-h-[34px] rounded-full px-3 text-xs font-semibold transition',
+            idx === 0
+              ? 'bg-[#7664D9] text-white'
+              : 'border border-[#E2E8F0] bg-[#F8FAFF] text-[#334155] hover:border-[#7664D9] hover:text-[#5B48C4]',
+          ]}
+        >
+          {cat.label}
+        </button>
+      ))}
+    </div>
+
+    <!-- Hot keyword chips -->
+    <div class="flex flex-wrap items-center gap-1.5 border-b border-[#E2E8F0] bg-[#F8FAFF]/70 px-4 py-2 sm:px-5">
+      <span class="mr-1 text-xs font-semibold text-[#64748B]">热搜：</span>
+      {['灵动云', '暮光加速', '梯子推荐', 'Clash订阅', 'Shadowrocket', 'Mihomo', 'v2rayN', 'sing-box', 'TUN', '订阅更新失败'].map((kw) => (
+        <button
+          type="button"
+          data-quick-query={kw}
+          class="rounded-full border border-[#E2E8F0] bg-white px-2.5 py-1 text-xs font-medium text-[#334155] transition hover:border-[#7664D9] hover:bg-[#F0EBFF] hover:text-[#5B48C4]"
+        >
+          {kw}
+        </button>
+      ))}
+    </div>
+
+    <!-- Results area -->
+    <div id="modal-search-results" class="flex-1 overflow-y-auto px-4 py-4 sm:px-5">
+      <p class="text-sm text-[#64748B]">
+        支持中文部分词匹配、同义词映射（如「小火箭」匹配 Shadowrocket、「科学上网」匹配魔法上网）与英文大小写不敏感检索。按 Enter 键进入完整搜索结果页。
+      </p>
+    </div>
+
+    <!-- Footer bar -->
+    <div class="flex flex-wrap items-center justify-between gap-2 border-t border-[#E2E8F0] bg-[#F8FAFF] px-4 py-3 text-xs text-[#64748B] sm:px-5">
+      <span>↑↓ 切换结果 · Enter 跳转或进入完整搜索 · Esc 关闭</span>
+      <a id="modal-search-full-link" href="/search/" class="font-semibold text-[#5B48C4] hover:underline">
+        前往完整搜索结果页 →
+      </a>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    var modal = document.getElementById('search-modal');
+    var input = document.getElementById('modal-search-input');
+    var resultsBox = document.getElementById('modal-search-results');
+    var fullLink = document.getElementById('modal-search-full-link');
+    var closeBtn = document.getElementById('close-search-modal');
+    var catWrap = document.getElementById('modal-search-cats');
+    if (!modal || !input || !resultsBox) return;
+
+    var searchData = null;
+    var synonymsData = null;
+    var isComposing = false;
+    var activeCategory = 'all';
+    var activeIndex = -1;
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function editDistance1(a, b) {
+      if (Math.abs(a.length - b.length) > 1) return false;
+      var i = 0, j = 0, diffs = 0;
+      while (i < a.length && j < b.length) {
+        if (a[i] === b[j]) { i++; j++; }
+        else {
+          diffs++;
+          if (diffs > 1) return false;
+          if (a.length > b.length) i++;
+          else if (b.length > a.length) j++;
+          else { i++; j++; }
+        }
+      }
+      return diffs + (a.length - i) + (b.length - j) <= 1;
+    }
+
+    function expandQuery(rawQuery) {
+      var q = rawQuery.trim().toLowerCase();
+      if (!q) return { primary: [], expanded: [] };
+      var rawTokens = q.split(/\s+/).filter(Boolean);
+      var baseTokens = [];
+      rawTokens.forEach(function (t) {
+        baseTokens.push(t);
+        var parts = t.match(/[a-z0-9.-]+|[\u4e00-\u9fff]+/g);
+        if (parts && parts.length > 1) {
+          parts.forEach(function (p) { if (p.length >= 2 && baseTokens.indexOf(p) === -1) baseTokens.push(p); });
+        }
+      });
+      var expanded = new Set(baseTokens);
+      if (synonymsData && synonymsData.synonyms) {
+        baseTokens.forEach(function (tok) {
+          Object.keys(synonymsData.synonyms).forEach(function (k) {
+            var kl = k.toLowerCase();
+            if (tok === kl || (tok.length >= 2 && (kl.indexOf(tok) !== -1 || tok.indexOf(kl) !== -1))) {
+              expanded.add(kl);
+              synonymsData.synonyms[k].forEach(function (s) {
+                expanded.add(String(s).toLowerCase());
+              });
+            }
+          });
+        });
+      }
+      return { primary: baseTokens, expanded: Array.from(expanded) };
+    }
+
+    function highlight(text, terms) {
+      var safe = escapeHtml(text);
+      if (!terms.length) return safe;
+      var sorted = terms.slice().sort(function (a, b) { return b.length - a.length; }).slice(0, 6);
+      sorted.forEach(function (t) {
+        if (t.length < 2) return;
+        var esc = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        safe = safe.replace(new RegExp('(' + esc + ')', 'gi'), '<mark class="search-hl">$1</mark>');
+      });
+      return safe;
+    }
+
+    function scoreDoc(doc, queryObj) {
+      var titleL = (doc.title || '').toLowerCase();
+      var exactNameL = (doc.exactName || '').toLowerCase();
+      var keywordsL = (doc.keywords || '').toLowerCase();
+      var subtitleL = (doc.subtitle || '').toLowerCase();
+      var bodyL = (doc.body || '').toLowerCase();
+      var score = 0;
+
+      var exactWords = exactNameL ? exactNameL.split(/\s+/) : [];
+
+      queryObj.primary.forEach(function (tok) {
+        if (exactWords.indexOf(tok) !== -1) score += 140;
+        else if (exactNameL && exactNameL.indexOf(tok) !== -1) score += 75;
+        if (titleL.indexOf(tok) !== -1) score += 55;
+        if (keywordsL.indexOf(tok) !== -1) score += 36;
+        if (subtitleL.indexOf(tok) !== -1) score += 22;
+        if (bodyL.indexOf(tok) !== -1) score += 10;
+
+        // Mild typo tolerance for Latin terms >= 4 chars
+        if (/^[a-z0-9-]{4,}$/.test(tok) && score === 0) {
+          var words = (exactNameL + ' ' + titleL + ' ' + keywordsL).split(/[^a-z0-9-]+/);
+          for (var w = 0; w < words.length; w++) {
+            if (words[w].length >= 4 && editDistance1(tok, words[w])) {
+              score += 24;
+              break;
+            }
+          }
+        }
+      });
+
+      queryObj.expanded.forEach(function (tok) {
+        if (queryObj.primary.indexOf(tok) !== -1) return;
+        if (exactNameL && exactNameL.indexOf(tok) !== -1) score += 30;
+        if (titleL.indexOf(tok) !== -1) score += 20;
+        if (keywordsL.indexOf(tok) !== -1) score += 12;
+        if (subtitleL.indexOf(tok) !== -1) score += 8;
+        if (bodyL.indexOf(tok) !== -1) score += 4;
+      });
+
+      return score;
+    }
+
+    function ensureData(cb) {
+      if (searchData && synonymsData) {
+        cb();
+        return;
+      }
+      Promise.all([
+        fetch('/search-index.json').then(function (r) { return r.json(); }),
+        fetch('/search-synonyms.json').then(function (r) { return r.json(); }).catch(function () { return { synonyms: {} }; }),
+      ])
+        .then(function (res) {
+          searchData = res[0];
+          synonymsData = res[1];
+          cb();
+        })
+        .catch(function () {
+          resultsBox.innerHTML = '<p class="text-sm text-rose-600">搜索索引加载失败，请点击下方进入完整搜索页重试。</p>';
+        });
+    }
+
+    function renderResults() {
+      var q = input.value.trim();
+      if (fullLink) {
+        fullLink.href = q ? '/search/?q=' + encodeURIComponent(q) : '/search/';
+      }
+      if (!q) {
+        activeIndex = -1;
+        resultsBox.innerHTML = '<p class="text-sm text-[#64748B]">输入品牌名（如 灵动云、U1S1）、客户端（如 Clash Verge Rev、Shadowrocket、Mihomo）或教程关键词即可实时检索。</p>';
+        return;
+      }
+      ensureData(function () {
+        var qObj = expandQuery(q);
+        var items = (searchData || [])
+          .filter(function (doc) {
+            return activeCategory === 'all' || doc.categoryGroup === activeCategory;
+          })
+          .map(function (doc) {
+            return { doc: doc, score: scoreDoc(doc, qObj) };
+          })
+          .filter(function (x) { return x.score > 0; })
+          .sort(function (a, b) { return b.score - a.score; });
+
+        if (!items.length) {
+          activeIndex = -1;
+          resultsBox.innerHTML =
+            '<div class="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFF] p-5 text-sm">' +
+            '<p class="font-semibold text-[#252D49]">未找到与「' + escapeHtml(q) + '」直接匹配的内容</p>' +
+            '<p class="mt-1 text-[#64748B]">可以尝试切换上方分类或访问以下热门核心入口：</p>' +
+            '<div class="mt-3 flex flex-wrap gap-2">' +
+            '<a href="/recommend/airports/" class="rounded-xl bg-white border border-[#E2E8F0] px-3 py-1.5 font-medium text-[#5B48C4]">魔法机场推荐</a>' +
+            '<a href="/clash/airports/" class="rounded-xl bg-white border border-[#E2E8F0] px-3 py-1.5 font-medium text-[#5B48C4]">Clash机场推荐</a>' +
+            '<a href="/clients/" class="rounded-xl bg-white border border-[#E2E8F0] px-3 py-1.5 font-medium text-[#5B48C4]">客户端选择助手</a>' +
+            '<a href="/guides/getting-started/" class="rounded-xl bg-white border border-[#E2E8F0] px-3 py-1.5 font-medium text-[#5B48C4]">新手入门指南</a>' +
+            '</div></div>';
+          return;
+        }
+
+        var top = items.slice(0, 12);
+        var hlTerms = qObj.primary.concat(qObj.expanded);
+        var html = '<div class="mb-2 text-xs text-[#64748B]">共匹配到 ' + items.length + ' 条结果（展示前 ' + top.length + ' 条）</div><ul class="space-y-2" id="modal-result-list">';
+        top.forEach(function (entry, idx) {
+          var d = entry.doc;
+          html +=
+            '<li><a href="' + escapeHtml(d.url) + '" data-result-idx="' + idx + '" class="modal-result-item block rounded-xl border border-[#E2E8F0] bg-white p-3.5 transition hover:border-[#7664D9] hover:bg-[#F8FAFF]">' +
+            '<div class="flex flex-wrap items-center justify-between gap-2">' +
+            '<span class="text-sm font-bold text-[#252D49]">' + highlight(d.title, hlTerms) + '</span>' +
+            '<span class="rounded-full bg-[#F0EBFF] px-2.5 py-0.5 text-xs font-semibold text-[#5B48C4]">' + escapeHtml(d.kindLabel) + '</span>' +
+            '</div>' +
+            (d.subtitle ? '<p class="mt-1 text-xs text-[#334155]">' + highlight(d.subtitle, hlTerms) + '</p>' : '') +
+            (d.meta ? '<p class="mt-1 text-[11px] text-[#64748B]">' + escapeHtml(d.meta) + '</p>' : '') +
+            '</a></li>';
+        });
+        html += '</ul>';
+        if (items.length > 12) {
+          html += '<div class="mt-3 text-center"><a href="/search/?q=' + encodeURIComponent(q) + '" class="btn-magic-secondary text-xs">查看全部 ' + items.length + ' 条结果 →</a></div>';
+        }
+        resultsBox.innerHTML = html;
+        activeIndex = -1;
+      });
+    }
+
+    function openModal(initialQuery) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+      if (typeof initialQuery === 'string') {
+        input.value = initialQuery;
+      }
+      setTimeout(function () { input.focus(); }, 30);
+      if (input.value.trim()) renderResults();
+      else ensureData(function () {});
+    }
+
+    function closeModal() {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('click', function (e) {
+      var opener = e.target.closest('[data-open-search]');
+      if (opener) {
+        e.preventDefault();
+        openModal(opener.getAttribute('data-initial-query') || '');
+        return;
+      }
+      var quick = e.target.closest('[data-quick-query]');
+      if (quick) {
+        input.value = quick.getAttribute('data-quick-query') || '';
+        renderResults();
+        input.focus();
+      }
+      if (e.target === modal) closeModal();
+    });
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+    if (catWrap) {
+      catWrap.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-search-cat]');
+        if (!btn) return;
+        activeCategory = btn.getAttribute('data-search-cat') || 'all';
+        catWrap.querySelectorAll('[data-search-cat]').forEach(function (el) {
+          var isAct = el === btn;
+          el.className = isAct
+            ? 'min-h-[34px] rounded-full px-3 text-xs font-semibold transition bg-[#7664D9] text-white'
+            : 'min-h-[34px] rounded-full px-3 text-xs font-semibold transition border border-[#E2E8F0] bg-[#F8FAFF] text-[#334155] hover:border-[#7664D9] hover:text-[#5B48C4]';
+        });
+        renderResults();
+      });
+    }
+
+    input.addEventListener('compositionstart', function () { isComposing = true; });
+    input.addEventListener('compositionend', function () {
+      isComposing = false;
+      renderResults();
+    });
+    input.addEventListener('input', function () {
+      if (!isComposing) renderResults();
+    });
+
+    input.addEventListener('keydown', function (e) {
+      var list = resultsBox.querySelectorAll('.modal-result-item');
+      if (e.key === 'ArrowDown' && list.length) {
+        e.preventDefault();
+        activeIndex = (activeIndex + 1) % list.length;
+        list.forEach(function (el, i) { el.classList.toggle('ring-2', i === activeIndex); el.classList.toggle('ring-[#7664D9]', i === activeIndex); });
+        list[activeIndex].scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'ArrowUp' && list.length) {
+        e.preventDefault();
+        activeIndex = activeIndex <= 0 ? list.length - 1 : activeIndex - 1;
+        list.forEach(function (el, i) { el.classList.toggle('ring-2', i === activeIndex); el.classList.toggle('ring-[#7664D9]', i === activeIndex); });
+        list[activeIndex].scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'Enter') {
+        if (activeIndex >= 0 && list[activeIndex]) {
+          e.preventDefault();
+          window.location.href = list[activeIndex].getAttribute('href');
+        } else if (input.value.trim()) {
+          e.preventDefault();
+          window.location.href = '/search/?q=' + encodeURIComponent(input.value.trim());
+        }
+      }
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+        closeModal();
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        openModal();
+      }
+    });
+  })();
+</script>

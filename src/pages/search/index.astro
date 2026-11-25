@@ -1,0 +1,330 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+---
+
+<BaseLayout
+  title="全站中文智能搜索：品牌、客户端、Clash教程与知识百科｜魔法梯子"
+  description="搜索魔法梯子站内 18 家机场品牌、10 款官方客户端、Clash 教程、优惠码、协议及常见问题。"
+  canonicalPath="/search/"
+  noindex={true}
+>
+  <section class="bg-magic-hero border-b border-[#E2E8F0] py-8 sm:py-10">
+    <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ label: '首页', href: '/' }, { label: '全站搜索' }]} />
+      <h1 class="text-2xl font-extrabold text-[#252D49] sm:text-3xl">全站中文智能检索</h1>
+      <p class="mt-2 text-sm text-[#64748B]">
+        支持中文部分匹配、中英文别名与同义词联想（如：小火箭 ↔ Shadowrocket、科学上网 ↔ 魔法上网、飞V ↔ FlyV、唯兔云 ↔ V2云）。
+      </p>
+
+      <div class="mt-5 flex flex-col gap-2 rounded-2xl border border-[#CBD5E1] bg-white p-2 shadow-sm sm:flex-row">
+        <label for="page-search-input" class="sr-only">输入搜索关键词</label>
+        <input
+          id="page-search-input"
+          type="search"
+          autocomplete="off"
+          placeholder="输入品牌名、客户端、错误现象或问题（如：灵动云、Mihomo、TUN、订阅更新失败）"
+          class="h-11 flex-1 bg-transparent px-3 text-base text-[#252D49] placeholder:text-[#64748B] focus:outline-none"
+        />
+        <button id="page-search-btn" type="button" class="btn-magic-primary shrink-0 px-6 text-sm">
+          立即检索
+        </button>
+      </div>
+
+      <!-- Hot queries -->
+      <div class="mt-4 flex flex-wrap items-center gap-1.5">
+        <span class="text-xs font-semibold text-[#64748B]">重点热词：</span>
+        {['灵动云', '暮光加速', '梯子推荐', '魔法梯子', 'Clash', 'Clash订阅', 'Shadowrocket', '小火箭', 'Mihomo', 'v2rayN', 'v2rayNG', 'sing-box', 'OpenClash', 'VPN', 'TUN', '订阅更新失败'].map((kw) => (
+          <button
+            type="button"
+            data-page-kw={kw}
+            class="rounded-full border border-[#E2E8F0] bg-white px-2.5 py-1 text-xs font-medium text-[#334155] transition hover:border-[#7664D9] hover:bg-[#F0EBFF] hover:text-[#5B48C4]"
+          >
+            {kw}
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-8 sm:py-12">
+    <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+      <!-- Category Tabs -->
+      <div id="page-search-cats" class="mb-6 flex flex-wrap gap-2">
+        {[
+          { id: 'all', label: '全部' },
+          { id: 'brand', label: '机场品牌' },
+          { id: 'clash', label: 'Clash' },
+          { id: 'client', label: '客户端' },
+          { id: 'guide', label: '使用指南' },
+          { id: 'knowledge', label: '知识百科' },
+        ].map((c, idx) => (
+          <button
+            type="button"
+            data-pcat={c.id}
+            class:list={[
+              'min-h-[38px] rounded-full px-4 text-xs font-semibold transition',
+              idx === 0 ? 'bg-[#7664D9] text-white' : 'border border-[#E2E8F0] bg-white text-[#334155] hover:border-[#7664D9]',
+            ]}
+          >
+            {c.label}
+          </button>
+        ))}
+      </div>
+
+      <div id="page-search-summary" class="mb-4 text-sm text-[#64748B]">正在准备全站中文搜索索引...</div>
+      <div id="page-search-results" class="space-y-3"></div>
+      <div id="page-search-pagination" class="mt-6 flex items-center justify-center gap-2"></div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function () {
+      var input = document.getElementById('page-search-input');
+      var btn = document.getElementById('page-search-btn');
+      var catsWrap = document.getElementById('page-search-cats');
+      var summaryEl = document.getElementById('page-search-summary');
+      var resultsEl = document.getElementById('page-search-results');
+      var pagerEl = document.getElementById('page-search-pagination');
+      if (!input || !resultsEl || !summaryEl) return;
+
+      var searchData = [];
+      var synonymsData = { synonyms: {} };
+      var activeCat = 'all';
+      var currentPage = 1;
+      var pageSize = 12;
+      var isComposing = false;
+
+      function escapeHtml(str) {
+        return String(str || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function editDistance1(a, b) {
+        if (Math.abs(a.length - b.length) > 1) return false;
+        var i = 0, j = 0, diffs = 0;
+        while (i < a.length && j < b.length) {
+          if (a[i] === b[j]) { i++; j++; }
+          else {
+            diffs++;
+            if (diffs > 1) return false;
+            if (a.length > b.length) i++;
+            else if (b.length > a.length) j++;
+            else { i++; j++; }
+          }
+        }
+        return diffs + (a.length - i) + (b.length - j) <= 1;
+      }
+
+      function expandQuery(raw) {
+        var q = raw.trim().toLowerCase();
+        if (!q) return { primary: [], expanded: [] };
+        var rawTokens = q.split(/\s+/).filter(Boolean);
+        var tokens = [];
+        rawTokens.forEach(function (t) {
+          tokens.push(t);
+          var parts = t.match(/[a-z0-9.-]+|[\u4e00-\u9fff]+/g);
+          if (parts && parts.length > 1) {
+            parts.forEach(function (p) { if (p.length >= 2 && tokens.indexOf(p) === -1) tokens.push(p); });
+          }
+        });
+        var exp = new Set(tokens);
+        var synMap = (synonymsData && synonymsData.synonyms) || {};
+        tokens.forEach(function (tok) {
+          Object.keys(synMap).forEach(function (k) {
+            var kl = k.toLowerCase();
+            if (tok === kl || (tok.length >= 2 && (kl.indexOf(tok) !== -1 || tok.indexOf(kl) !== -1))) {
+              exp.add(kl);
+              synMap[k].forEach(function (s) { exp.add(String(s).toLowerCase()); });
+            }
+          });
+        });
+        return { primary: tokens, expanded: Array.from(exp) };
+      }
+
+      function highlight(text, terms) {
+        var safe = escapeHtml(text);
+        if (!terms.length) return safe;
+        var sorted = terms.slice().sort(function (a, b) { return b.length - a.length; }).slice(0, 6);
+        sorted.forEach(function (t) {
+          if (t.length < 2) return;
+          var esc = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          safe = safe.replace(new RegExp('(' + esc + ')', 'gi'), '<mark class="search-hl">$1</mark>');
+        });
+        return safe;
+      }
+
+      function scoreDoc(doc, qObj) {
+        var titleL = (doc.title || '').toLowerCase();
+        var exactNameL = (doc.exactName || '').toLowerCase();
+        var keywordsL = (doc.keywords || '').toLowerCase();
+        var subtitleL = (doc.subtitle || '').toLowerCase();
+        var bodyL = (doc.body || '').toLowerCase();
+        var score = 0;
+
+        var exactWords = exactNameL ? exactNameL.split(/\s+/) : [];
+
+        qObj.primary.forEach(function (tok) {
+          if (exactWords.indexOf(tok) !== -1) score += 140;
+          else if (exactNameL && exactNameL.indexOf(tok) !== -1) score += 75;
+          if (titleL.indexOf(tok) !== -1) score += 55;
+          if (keywordsL.indexOf(tok) !== -1) score += 36;
+          if (subtitleL.indexOf(tok) !== -1) score += 22;
+          if (bodyL.indexOf(tok) !== -1) score += 10;
+          if (/^[a-z0-9-]{4,}$/.test(tok) && score === 0) {
+            var words = (exactNameL + ' ' + titleL + ' ' + keywordsL).split(/[^a-z0-9-]+/);
+            for (var w = 0; w < words.length; w++) {
+              if (words[w].length >= 4 && editDistance1(tok, words[w])) {
+                score += 24;
+                break;
+              }
+            }
+          }
+        });
+
+        qObj.expanded.forEach(function (tok) {
+          if (qObj.primary.indexOf(tok) !== -1) return;
+          if (exactNameL && exactNameL.indexOf(tok) !== -1) score += 30;
+          if (titleL.indexOf(tok) !== -1) score += 20;
+          if (keywordsL.indexOf(tok) !== -1) score += 12;
+          if (subtitleL.indexOf(tok) !== -1) score += 8;
+          if (bodyL.indexOf(tok) !== -1) score += 4;
+        });
+
+        return score;
+      }
+
+      function runSearch() {
+        var q = input.value.trim();
+        var newUrl = q ? '/search/?q=' + encodeURIComponent(q) : '/search/';
+        if (window.location.pathname + window.location.search !== newUrl) {
+          history.replaceState(null, '', newUrl);
+        }
+
+        var filtered = searchData.filter(function (doc) {
+          return activeCat === 'all' || doc.categoryGroup === activeCat;
+        });
+
+        var qObj = expandQuery(q);
+        var ranked = q
+          ? filtered
+              .map(function (doc) { return { doc: doc, score: scoreDoc(doc, qObj) }; })
+              .filter(function (x) { return x.score > 0; })
+              .sort(function (a, b) { return b.score - a.score; })
+          : filtered.map(function (doc) { return { doc: doc, score: 1 }; });
+
+        if (!ranked.length) {
+          summaryEl.textContent = '未找到与「' + q + '」匹配的内容。';
+          resultsEl.innerHTML =
+            '<div class="rounded-2xl border border-[#E2E8F0] bg-white p-6">' +
+            '<h2 class="text-base font-bold text-[#252D49]">暂无直接匹配，推荐以下核心专题：</h2>' +
+            '<div class="mt-3 flex flex-wrap gap-2">' +
+            '<a href="/recommend/airports/" class="btn-magic-secondary text-xs">魔法机场推荐 (18家)</a>' +
+            '<a href="/clash/airports/" class="btn-magic-secondary text-xs">Clash机场推荐</a>' +
+            '<a href="/clients/" class="btn-magic-secondary text-xs">客户端选择助手</a>' +
+            '<a href="/guides/getting-started/" class="btn-magic-secondary text-xs">新手入门教程</a>' +
+            '</div></div>';
+          pagerEl.innerHTML = '';
+          return;
+        }
+
+        var totalPages = Math.ceil(ranked.length / pageSize);
+        if (currentPage > totalPages) currentPage = totalPages;
+        var start = (currentPage - 1) * pageSize;
+        var slice = ranked.slice(start, start + pageSize);
+        var hlTerms = qObj.primary.concat(qObj.expanded);
+
+        summaryEl.textContent = q
+          ? '共找到 ' + ranked.length + ' 条与「' + q + '」相关的结果（第 ' + currentPage + '/' + totalPages + ' 页）'
+          : '当前分类共收录 ' + ranked.length + ' 条内容（第 ' + currentPage + '/' + totalPages + ' 页）';
+
+        resultsEl.innerHTML = slice
+          .map(function (entry) {
+            var d = entry.doc;
+            return (
+              '<a href="' + escapeHtml(d.url) + '" class="magic-card block p-4 sm:p-5">' +
+              '<div class="flex flex-wrap items-center justify-between gap-2">' +
+              '<h2 class="text-base font-bold text-[#252D49]">' + highlight(d.title, hlTerms) + '</h2>' +
+              '<span class="rounded-full bg-[#F0EBFF] px-3 py-0.5 text-xs font-semibold text-[#5B48C4]">' + escapeHtml(d.kindLabel) + '</span>' +
+              '</div>' +
+              (d.subtitle ? '<p class="mt-1.5 text-sm text-[#334155]">' + highlight(d.subtitle, hlTerms) + '</p>' : '') +
+              (d.meta ? '<p class="mt-1.5 text-xs text-[#64748B]">' + escapeHtml(d.meta) + '</p>' : '') +
+              '</a>'
+            );
+          })
+          .join('');
+
+        if (totalPages > 1) {
+          var pHtml = '';
+          for (var p = 1; p <= totalPages; p++) {
+            pHtml +=
+              '<button type="button" data-page-num="' + p + '" class="min-h-[38px] min-w-[38px] rounded-xl px-3 text-xs font-bold ' +
+              (p === currentPage ? 'bg-[#7664D9] text-white' : 'border border-[#E2E8F0] bg-white text-[#252D49]') +
+              '">' + p + '</button>';
+          }
+          pagerEl.innerHTML = pHtml;
+        } else {
+          pagerEl.innerHTML = '';
+        }
+      }
+
+      Promise.all([
+        fetch('/search-index.json').then(function (r) { return r.json(); }),
+        fetch('/search-synonyms.json').then(function (r) { return r.json(); }).catch(function () { return { synonyms: {} }; }),
+      ]).then(function (res) {
+        searchData = res[0] || [];
+        synonymsData = res[1] || { synonyms: {} };
+        var params = new URLSearchParams(window.location.search);
+        var initialQ = params.get('q') || '';
+        if (initialQ) input.value = initialQ;
+        runSearch();
+      });
+
+      input.addEventListener('compositionstart', function () { isComposing = true; });
+      input.addEventListener('compositionend', function () {
+        isComposing = false;
+        currentPage = 1;
+        runSearch();
+      });
+      input.addEventListener('input', function () {
+        if (!isComposing) {
+          currentPage = 1;
+          runSearch();
+        }
+      });
+      if (btn) btn.addEventListener('click', function () { currentPage = 1; runSearch(); });
+
+      catsWrap.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-pcat]');
+        if (!b) return;
+        activeCat = b.getAttribute('data-pcat') || 'all';
+        currentPage = 1;
+        catsWrap.querySelectorAll('[data-pcat]').forEach(function (el) {
+          el.className = el === b
+            ? 'min-h-[38px] rounded-full px-4 text-xs font-semibold transition bg-[#7664D9] text-white'
+            : 'min-h-[38px] rounded-full px-4 text-xs font-semibold transition border border-[#E2E8F0] bg-white text-[#334155] hover:border-[#7664D9]';
+        });
+        runSearch();
+      });
+
+      document.addEventListener('click', function (e) {
+        var kwBtn = e.target.closest('[data-page-kw]');
+        if (kwBtn) {
+          input.value = kwBtn.getAttribute('data-page-kw') || '';
+          currentPage = 1;
+          runSearch();
+          return;
+        }
+        var pBtn = e.target.closest('[data-page-num]');
+        if (pBtn) {
+          currentPage = parseInt(pBtn.getAttribute('data-page-num'), 10) || 1;
+          runSearch();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+    })();
+  </script>
+</BaseLayout>

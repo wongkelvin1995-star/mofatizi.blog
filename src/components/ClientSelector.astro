@@ -1,0 +1,201 @@
+---
+import { ALL_CLIENTS } from '../data/registry';
+import { PLATFORM_DEFINITIONS } from '../data/site-config';
+
+const categories = ['全部', '新手友好', '桌面端客户端', '移动端客户端', '进阶配置工具', '路由器相关工具'];
+---
+
+<section id="client-assistant" class="rounded-3xl border border-[#E2E8F0] bg-white p-5 shadow-sm sm:p-7">
+  <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <span class="inline-flex rounded-full bg-[#EAF5FF] px-3 py-1 text-xs font-bold text-[#252D49]">
+        交互式魔法客户端选择助手
+      </span>
+      <h2 class="mt-2 text-xl font-bold text-[#252D49] sm:text-2xl">
+        按你的设备系统与配置需求筛选官方开源客户端
+      </h2>
+      <p class="mt-1 text-sm text-[#64748B]">
+        严格依据官方 GitHub Releases 与 App Store 发行记录过滤，绝不向不具备对应原生版本的系统推荐错误软件。
+      </p>
+    </div>
+    <div id="assistant-count" class="text-xs font-semibold text-[#5B48C4]">
+      当前展示全部 {ALL_CLIENTS.length} 款客户端
+    </div>
+  </div>
+
+  <!-- Step 1: OS Selection -->
+  <div class="mt-5">
+    <div class="mb-2 text-xs font-bold tracking-wide text-[#252D49]">1. 选择你的操作系统：</div>
+    <div class="flex flex-wrap gap-2" id="os-filter-group">
+      <button
+        type="button"
+        data-os-filter="all"
+        class="min-h-[44px] rounded-xl bg-[#7664D9] px-4 text-sm font-semibold text-white shadow-xs transition"
+      >
+        全部系统
+      </button>
+      {PLATFORM_DEFINITIONS.map((os) => (
+        <button
+          type="button"
+          data-os-filter={os.id}
+          class="min-h-[44px] rounded-xl border border-[#E2E8F0] bg-[#F8FAFF] px-4 text-sm font-semibold text-[#252D49] transition hover:border-[#7664D9] hover:bg-[#F0EBFF]"
+        >
+          <span aria-hidden="true" class="mr-1.5">{os.icon}</span>
+          {os.label}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <!-- Step 2: Category Selection -->
+  <div class="mt-4">
+    <div class="mb-2 text-xs font-bold tracking-wide text-[#252D49]">2. 按工具定位筛选：</div>
+    <div class="flex flex-wrap gap-2" id="cat-filter-group">
+      {categories.map((cat, idx) => (
+        <button
+          type="button"
+          data-cat-filter={cat === '全部' ? 'all' : cat}
+          class:list={[
+            'min-h-[38px] rounded-full px-3.5 text-xs font-semibold transition',
+            idx === 0
+              ? 'bg-[#252D49] text-white'
+              : 'border border-[#E2E8F0] bg-white text-[#334155] hover:border-[#7664D9] hover:text-[#5B48C4]',
+          ]}
+        >
+          {cat}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <!-- Results Grid -->
+  <div id="assistant-results" class="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    {ALL_CLIENTS.map((client) => (
+      <article
+        class="client-assistant-card magic-card flex flex-col justify-between p-5"
+        data-platforms={client.supportedPlatforms.join(',')}
+        data-categories={client.categories.join(',')}
+      >
+        <div>
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-center gap-2.5">
+              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#7664D9] to-[#87C5FF] text-sm font-bold text-white shadow-xs">
+                {client.clientName.slice(0, 2).toUpperCase()}
+              </div>
+              <div>
+                <h3 class="text-base font-bold text-[#252D49]">
+                  <a href={`/clients/${client.clientId}/`} class="hover:text-[#5B48C4] hover:underline">
+                    {client.clientName}
+                  </a>
+                </h3>
+                <span class="text-xs font-medium text-[#7664D9]">{client.clientRole}</span>
+              </div>
+            </div>
+            {client.beginnerFriendly && (
+              <span class="shrink-0 rounded-full bg-[#F0EBFF] px-2.5 py-0.5 text-[11px] font-semibold text-[#5B48C4]">
+                新手友好
+              </span>
+            )}
+          </div>
+
+          <p class="mt-3 text-sm leading-relaxed text-[#334155]">{client.tagline}</p>
+
+          <div class="mt-3 space-y-1.5 rounded-xl bg-[#F8FAFF] p-3 text-xs">
+            <div>
+              <span class="font-semibold text-[#252D49]">支持系统：</span>
+              <span class="text-[#334155]">{client.supportedPlatforms.join(' / ')}</span>
+            </div>
+            <div>
+              <span class="font-semibold text-[#252D49]">核心引擎：</span>
+              <span class="text-[#334155]">{client.coreEngine}</span>
+            </div>
+            <div>
+              <span class="font-semibold text-[#252D49]">配置格式：</span>
+              <span class="text-[#334155]">{client.supportedConfigTypes.slice(0, 2).join(' · ')}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 grid grid-cols-2 gap-2 border-t border-[#E2E8F0] pt-3">
+          <a
+            href={`/clients/${client.clientId}/`}
+            class="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[#7664D9] px-3 text-xs font-bold text-white transition hover:bg-[#5B48C4]"
+          >
+            完整使用指南
+          </a>
+          <a
+            href={client.officialSource}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-[#E2E8F0] bg-white px-3 text-xs font-bold text-[#252D49] transition hover:border-[#7664D9] hover:bg-[#F0EBFF]"
+          >
+            官方项目入口 ↗
+          </a>
+        </div>
+      </article>
+    ))}
+  </div>
+
+  <p id="assistant-empty" class="mt-6 hidden rounded-2xl border border-[#E2E8F0] bg-[#F8FAFF] p-5 text-center text-sm text-[#64748B]">
+    当前组合下没有同时满足条件的客户端（例如路由器 OpenWrt 仅对应 OpenClash、Mihomo 或 sing-box）。请尝试切换「全部」分类查看更多可用工具。
+  </p>
+</section>
+
+<script is:inline>
+  (function () {
+    var osGroup = document.getElementById('os-filter-group');
+    var catGroup = document.getElementById('cat-filter-group');
+    var cards = Array.from(document.querySelectorAll('.client-assistant-card'));
+    var countEl = document.getElementById('assistant-count');
+    var emptyEl = document.getElementById('assistant-empty');
+    if (!osGroup || !catGroup || !cards.length) return;
+
+    var activeOs = 'all';
+    var activeCat = 'all';
+
+    function applyFilters() {
+      var visible = 0;
+      cards.forEach(function (card) {
+        var platforms = (card.getAttribute('data-platforms') || '').split(',');
+        var cats = (card.getAttribute('data-categories') || '').split(',');
+        var matchOs = activeOs === 'all' || platforms.indexOf(activeOs) !== -1;
+        var matchCat = activeCat === 'all' || cats.indexOf(activeCat) !== -1;
+        var show = matchOs && matchCat;
+        card.classList.toggle('hidden', !show);
+        if (show) visible++;
+      });
+      if (countEl) {
+        countEl.textContent = '当前筛选结果：' + visible + ' 款已核验客户端';
+      }
+      if (emptyEl) {
+        emptyEl.classList.toggle('hidden', visible > 0);
+      }
+    }
+
+    osGroup.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-os-filter]');
+      if (!btn) return;
+      activeOs = btn.getAttribute('data-os-filter') || 'all';
+      osGroup.querySelectorAll('[data-os-filter]').forEach(function (el) {
+        var isAct = el === btn;
+        el.className = isAct
+          ? 'min-h-[44px] rounded-xl bg-[#7664D9] px-4 text-sm font-semibold text-white shadow-xs transition'
+          : 'min-h-[44px] rounded-xl border border-[#E2E8F0] bg-[#F8FAFF] px-4 text-sm font-semibold text-[#252D49] transition hover:border-[#7664D9] hover:bg-[#F0EBFF]';
+      });
+      applyFilters();
+    });
+
+    catGroup.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-cat-filter]');
+      if (!btn) return;
+      activeCat = btn.getAttribute('data-cat-filter') || 'all';
+      catGroup.querySelectorAll('[data-cat-filter]').forEach(function (el) {
+        var isAct = el === btn;
+        el.className = isAct
+          ? 'min-h-[38px] rounded-full px-3.5 text-xs font-semibold transition bg-[#252D49] text-white'
+          : 'min-h-[38px] rounded-full px-3.5 text-xs font-semibold transition border border-[#E2E8F0] bg-white text-[#334155] hover:border-[#7664D9] hover:text-[#5B48C4]';
+      });
+      applyFilters();
+    });
+  })();
+</script>

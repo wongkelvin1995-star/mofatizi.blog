@@ -1,0 +1,57 @@
+---
+import { getEntry, render } from 'astro:content';
+import ArticleLayout from '../../../layouts/ArticleLayout.astro';
+import { SITE_CONFIG } from '../../../data/site-config';
+
+const entry = await getEntry('guides', 'clash-modes');
+if (!entry) throw new Error('Missing clash-modes');
+const { Content, headings } = await render(entry);
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: entry.data.title,
+    description: entry.data.description,
+    datePublished: entry.data.publishDate,
+    dateModified: entry.data.updatedDate,
+    author: { '@type': 'Organization', name: SITE_CONFIG.siteName },
+    mainEntityOfPage: `${SITE_CONFIG.domain}/clash/modes/`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: entry.data.faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  },
+];
+---
+
+<ArticleLayout
+  title={entry.data.title}
+  h1={entry.data.title}
+  description={entry.data.description}
+  category={entry.data.category}
+  publishDate={entry.data.publishDate}
+  updatedDate={entry.data.updatedDate}
+  canonicalPath="/clash/modes/"
+  breadcrumbs={[
+    { label: '首页', href: '/' },
+    { label: 'Clash 知识中心', href: '/clash/' },
+    { label: 'Clash 模式知识' },
+  ]}
+  headings={headings}
+  faqs={entry.data.faqs}
+  sources={entry.data.sources}
+  relatedLinks={[
+    { label: 'Clash TUN 模式设置', href: '/clash/tun/', tag: '接管机制' },
+    { label: '梯子节点切换指南', href: '/guides/switch-nodes/', tag: '节点切换' },
+    { label: 'YAML 配置文件结构', href: '/knowledge/clash-yaml-structure-basics/', tag: '配置基础' },
+  ]}
+  jsonLd={jsonLd}
+>
+  <Content />
+</ArticleLayout>

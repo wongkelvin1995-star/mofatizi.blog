@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <defs>
+    <linearGradient id="logo-grad" x1="10" y1="10" x2="110" y2="110" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7664D9" />
+      <stop offset="58%" stop-color="#87C5FF" />
+      <stop offset="100%" stop-color="#F5C9E5" />
+    </linearGradient>
+    <linearGradient id="inner-glow" x1="25" y1="20" x2="95" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.98" />
+      <stop offset="100%" stop-color="#EAF5FF" stop-opacity="0.88" />
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="104" height="104" rx="28" fill="url(#logo-grad)" />
+  <circle cx="60" cy="60" r="41" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="2" stroke-dasharray="6 5" />
+  <circle cx="60" cy="60" r="34" stroke="#F0EBFF" stroke-opacity="0.35" stroke-width="1.2" />
+  <path d="M43 88V42C43 32.6 50.6 25 60 25C69.4 25 77 32.6 77 42V88" stroke="url(#inner-glow)" stroke-width="5.5" stroke-linecap="round" />
+  <path d="M45 50H75M45 64H75M45 78H75" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round" opacity="0.92" />
+  <path d="M60 15L63.5 24.5L73 28L63.5 31.5L60 41L56.5 31.5L47 28L56.5 24.5L60 15Z" fill="#FFFFFF" />
+  <circle cx="91" cy="31" r="4" fill="#F5C9E5" />
+  <circle cx="29" cy="84" r="3.2" fill="#EAF5FF" />
+</svg>

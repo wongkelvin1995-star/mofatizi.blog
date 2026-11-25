@@ -1,0 +1,131 @@
+---
+import { getEntry, render } from 'astro:content';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { ALL_BRANDS, ALL_CLIENTS } from '../../data/registry';
+import { SITE_CONFIG } from '../../data/site-config';
+
+export function getStaticPaths() {
+  return ALL_CLIENTS.map((client) => ({
+    params: { slug: client.clientId },
+    props: { client },
+  }));
+}
+
+const { client } = Astro.props;
+const entry = await getEntry('clients', client.clientId);
+if (!entry) throw new Error(`Missing client markdown for ${client.clientId}`);
+const { Content, headings } = await render(entry);
+
+const relatedBrands = ALL_BRANDS.filter((b) => (entry.data.relatedBrands || []).includes(b.slug));
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: entry.data.title,
+    url: `${SITE_CONFIG.domain}/clients/${client.clientId}/`,
+    description: entry.data.description,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: client.clientName,
+    applicationCategory: 'NetworkingApplication',
+    operatingSystem: client.supportedPlatforms.join(', '),
+    url: client.officialSource,
+    softwareVersion: client.documentedVersion,
+  },
+  ...(entry.data.faqs.length
+    ? [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: entry.data.faqs.map((f) => ({
+            '@type': 'Question',
+            name: f.question,
+            acceptedAnswer: { '@type': 'Answer', text: f.answer },
+          })),
+        },
+      ]
+    : []),
+];
+---
+
+<ArticleLayout
+  title={entry.data.title}
+  h1={entry.data.title}
+  description={entry.data.description}
+  category={entry.data.category}
+  publishDate={entry.data.publishDate}
+  updatedDate={entry.data.updatedDate}
+  documentedVersion={client.documentedVersion}
+  canonicalPath={`/clients/${client.clientId}/`}
+  breadcrumbs={[
+    { label: '首页', href: '/' },
+    { label: '客户端大全', href: '/clients/' },
+    { label: client.clientName },
+  ]}
+  headings={headings}
+  faqs={entry.data.faqs}
+  sources={entry.data.sources}
+  relatedLinks={[
+    ...(client.clientId === 'shadowrocket'
+      ? [{ label: 'Shadowrocket 订阅导入与添加节点教程', href: '/clients/shadowrocket/subscription/', tag: '专题实操' }]
+      : []),
+    { label: 'Clash 客户端对比横评', href: '/clash/client-comparison/', tag: '横向选型' },
+    { label: '客户端选择助手', href: '/clients/#client-assistant', tag: '筛选工具' },
+    ...relatedBrands.slice(0, 2).map((b) => ({
+      label: `${b.name} 客户端与订阅档案`,
+      href: `/brands/${b.slug}/`,
+      tag: '关联品牌',
+    })),
+  ]}
+  jsonLd={jsonLd}
+>
+  <!-- Structured Official Client Fact Card -->
+  <div class="not-prose mb-8 rounded-2xl border border-[#D8CEFF] bg-[#F8FAFF] p-5">
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <div>
+        <div class="text-xs font-bold text-[#7664D9] uppercase">官方核验百科卡片 · 资料日期 {client.sourceDate}</div>
+        <div class="mt-1 text-lg font-bold text-[#252D49]">{client.clientName}</div>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <a
+          href={client.officialSource}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-magic-primary min-h-[38px] px-3.5 py-1.5 text-xs"
+        >
+          访问官方项目主页 ↗
+        </a>
+        {client.releasesUrl !== client.officialSource && (
+          <a
+            href={client.releasesUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-magic-secondary min-h-[38px] px-3.5 py-1.5 text-xs"
+          >
+            官方 Releases ↗
+          </a>
+        )}
+      </div>
+    </div>
+
+    <div class="mt-4 grid gap-3 text-xs sm:grid-cols-2">
+      <div class="rounded-xl bg-white p-3 border border-[#E2E8F0]">
+        <span class="block font-bold text-[#252D49]">底层核心与技术栈</span>
+        <span class="mt-1 block text-[#334155]">{client.coreEngine} · {client.techStack}</span>
+      </div>
+      <div class="rounded-xl bg-white p-3 border border-[#E2E8F0]">
+        <span class="block font-bold text-[#252D49]">官方支持平台</span>
+        <span class="mt-1 block text-[#334155]">{client.supportedPlatforms.join(' / ')}</span>
+      </div>
+      <div class="rounded-xl bg-white p-3 border border-[#E2E8F0] sm:col-span-2">
+        <span class="block font-bold text-[#252D49]">支持配置类型</span>
+        <span class="mt-1 block text-[#334155]">{client.supportedConfigTypes.join(' · ')}</span>
+      </div>
+    </div>
+  </div>
+
+  <Content />
+</ArticleLayout>

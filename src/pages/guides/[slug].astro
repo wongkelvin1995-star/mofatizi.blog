@@ -1,0 +1,71 @@
+---
+import { getCollection, render } from 'astro:content';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { SITE_CONFIG } from '../../data/site-config';
+
+export async function getStaticPaths() {
+  const allowed = new Set(['getting-started', 'vpn-vs-airport', 'buy-subscription', 'switch-nodes']);
+  const entries = await getCollection('guides', ({ id, data }) => !data.draft && allowed.has(id));
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: entry.data.title,
+    description: entry.data.description,
+    datePublished: entry.data.publishDate,
+    dateModified: entry.data.updatedDate,
+    author: { '@type': 'Organization', name: SITE_CONFIG.siteName },
+    mainEntityOfPage: `${SITE_CONFIG.domain}/guides/${entry.id}/`,
+  },
+  ...(entry.data.faqs.length
+    ? [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: entry.data.faqs.map((f) => ({
+            '@type': 'Question',
+            name: f.question,
+            acceptedAnswer: { '@type': 'Answer', text: f.answer },
+          })),
+        },
+      ]
+    : []),
+];
+---
+
+<ArticleLayout
+  title={entry.data.title}
+  h1={entry.data.title}
+  description={entry.data.description}
+  category={entry.data.category}
+  publishDate={entry.data.publishDate}
+  updatedDate={entry.data.updatedDate}
+  canonicalPath={`/guides/${entry.id}/`}
+  breadcrumbs={[
+    { label: '首页', href: '/' },
+    { label: '魔法教程', href: '/guides/' },
+    { label: entry.data.primaryKeyword },
+  ]}
+  headings={headings}
+  faqs={entry.data.faqs}
+  sources={entry.data.sources}
+  relatedLinks={(entry.data.relatedArticles || []).map((href) => ({
+    label: href.replace(/^\//, '').replace(/\/$/, '').replace(/\//g, ' · '),
+    href,
+    tag: '相关教程',
+  }))}
+  coverImage={entry.id === 'getting-started' ? '/illustrations/academy-library-mage.webp' : undefined}
+  coverAlt="魔法梯子新手魔法学院插画"
+  jsonLd={jsonLd}
+>
+  <Content />
+</ArticleLayout>

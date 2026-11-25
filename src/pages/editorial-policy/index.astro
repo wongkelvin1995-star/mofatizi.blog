@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+---
+
+<BaseLayout
+  title="编辑原则与内容真实性核验规范｜魔法梯子"
+  description="公开说明魔法梯子的内容核验红线：禁止虚构测速排名、禁止伪造价格与优惠码、如实注明日期与政策差异、严格区分官方客户端与 Clash 兼容证据。"
+  canonicalPath="/editorial-policy/"
+>
+  <section class="bg-magic-hero border-b border-[#E2E8F0] py-10 sm:py-12">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ label: '首页', href: '/' }, { label: '编辑原则' }]} />
+      <h1 class="text-3xl font-extrabold text-[#252D49] sm:text-4xl">编辑原则与资料核验规范</h1>
+      <p class="mt-3 text-base text-[#334155]">
+        确保每一条价格记录、客户端支持结论与技术文档都有据可查，是魔法梯子立站的核心底线。
+      </p>
+    </div>
+  </section>
+
+  <section class="py-10 sm:py-14">
+    <div class="mx-auto max-w-4xl space-y-6 px-4 sm:px-6 lg:px-8">
+      <div class="magic-card p-6 sm:p-8 space-y-4 text-sm leading-relaxed text-[#334155]">
+        <h2 class="text-xl font-bold text-[#252D49]">一、禁止虚构与客观信息边界</h2>
+        <ul class="list-disc space-y-2 pl-5">
+          <li><strong>不做虚构测速与性能榜单：</strong> 本站不发布无独立实测支撑的晚高峰测速文章、节点延迟排行或主观稳定排名；所有品牌展示顺序均为编辑整理顺序。</li>
+          <li><strong>不默认推断 Clash 兼容性：</strong> 只有公开档案或后台教程明确载明支持第三方导入或可申请订阅的品牌才进入 Clash 兼容序列；对主推官方客户端或暂停通用订阅的品牌均予以明示。</li>
+          <li><strong>不虚算未经确认折扣的优惠码：</strong> 仅在公开来源或品牌页面明确写明固定折扣率（如 8 折）及排除套餐时才展示折后参考价；存在信息缺口的优惠码均提示以结算页实时显示为准。</li>
+          <li><strong>客户端来源真实可查：</strong> 全部开源及原生客户端教程均对照官方 GitHub 仓库或 App Store 发行主体核验，绝不提供来路不明的第三方安装包。</li>
+        </ul>
+
+        <h2 class="text-xl font-bold text-[#252D49]">二、日期标注与冲突并列展示</h2>
+        <p>
+          所有套餐表格及兼容结论均注明对应资料的收集或记录日期（如 2026-10-20、2026-10-31 或 2026-11-24）。当不同时期的公开资料出现规格变动或政策调整（如第三方订阅收紧、年付规格变更）时，本站以并列方式客观说明差异，不以旧记录冒充当期承诺。
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

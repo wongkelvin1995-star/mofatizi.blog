@@ -1,0 +1,72 @@
+---
+import { SITE_CONFIG } from '../data/site-config';
+---
+
+<footer class="bg-magic-footer text-slate-200">
+  <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+      <!-- Brand Summary -->
+      <div class="space-y-3">
+        <div class="flex items-center gap-2.5">
+          <img src="/logo.svg" alt="魔法梯子" width="36" height="36" class="h-9 w-9 rounded-xl" />
+          <div>
+            <div class="text-base font-bold text-white">{SITE_CONFIG.siteName}</div>
+            <div class="text-xs font-medium text-[#87C5FF]">{SITE_CONFIG.englishName} · mofatizi.blog</div>
+          </div>
+        </div>
+        <p class="text-sm leading-relaxed text-slate-300">
+          独立网络工具知识库与机场品牌档案站点。专注提供 Clash/Mihomo 客户端百科、订阅管理科普与基于可追溯公开资料的 18 家品牌套餐解析。
+        </p>
+        <p class="text-xs text-slate-400">
+          编者：{SITE_CONFIG.author.name} · 仅作信息整理，非任何服务商官方网站。
+        </p>
+      </div>
+
+      <!-- Core Columns -->
+      <div>
+        <h3 class="mb-3 text-sm font-bold tracking-wide text-white">核心知识栏目</h3>
+        <ul class="space-y-2 text-sm text-slate-300">
+          <li><a href="/" class="hover:text-[#87C5FF]">2026 魔法梯子推荐首页</a></li>
+          <li><a href="/recommend/airports/" class="hover:text-[#87C5FF]">魔法机场推荐与筛选</a></li>
+          <li><a href="/clash/" class="hover:text-[#87C5FF]">Clash 魔法学院中心</a></li>
+          <li><a href="/clash/airports/" class="hover:text-[#87C5FF]">Clash 兼容机场名录</a></li>
+          <li><a href="/clients/" class="hover:text-[#87C5FF]">十大客户端百科与选择助手</a></li>
+          <li><a href="/guides/getting-started/" class="hover:text-[#87C5FF]">科学上网新手入门指南</a></li>
+        </ul>
+      </div>
+
+      <!-- Guides & Tools -->
+      <div>
+        <h3 class="mb-3 text-sm font-bold tracking-wide text-white">专题与实用入口</h3>
+        <ul class="space-y-2 text-sm text-slate-300">
+          <li><a href="/brands/" class="hover:text-[#87C5FF]">18 家机场品牌完整档案</a></li>
+          <li><a href="/vpn/" class="hover:text-[#87C5FF]">VPN 与加速器知识指南</a></li>
+          <li><a href="/guides/vpn-vs-airport/" class="hover:text-[#87C5FF]">VPN 与机场区别及成本对比</a></li>
+          <li><a href="/tools/" class="hover:text-[#87C5FF]">魔法上网工具全景图谱</a></li>
+          <li><a href="/knowledge/" class="hover:text-[#87C5FF]">魔法知识图书馆</a></li>
+          <li><a href="/articles/" class="hover:text-[#87C5FF]">品牌与专题深度文章库</a></li>
+        </ul>
+      </div>
+
+      <!-- Governance & Compliance -->
+      <div>
+        <h3 class="mb-3 text-sm font-bold tracking-wide text-white">编辑规范与站点说明</h3>
+        <ul class="space-y-2 text-sm text-slate-300">
+          <li><a href="/about/" class="hover:text-[#87C5FF]">关于魔法梯子 & 作者团队</a></li>
+          <li><a href="/editorial-policy/" class="hover:text-[#87C5FF]">编辑原则与资料核验标准</a></li>
+          <li><a href="/affiliate-disclosure/" class="hover:text-[#87C5FF]">推广链接与佣金披露说明</a></li>
+          <li><a href="/privacy/" class="hover:text-[#87C5FF]">隐私政策与订阅安全声明</a></li>
+          <li><a href="/contact/" class="hover:text-[#87C5FF]">联系我们与信息纠错反馈</a></li>
+          <li><a href="/search/" class="hover:text-[#87C5FF]">全站中文智能搜索</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-10 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+      <p>
+        © 2026 {SITE_CONFIG.siteName} ({SITE_CONFIG.englishName}) · https://mofatizi.blog · 价格与客户端政策均为标明日期的公开资料记录，最终以服务商结算页为准。
+      </p>
+      <p>本站部分品牌注册入口含推广标识（rel="sponsored nofollow"），不改变资料展示的客观标准。</p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { SITE_CONFIG } from '../../data/site-config';
+---
+
+<BaseLayout
+  title="联系我们与资料纠错反馈｜魔法梯子"
+  description="发现机场套餐价格变更、客户端支持政策更新、开源仓库地址修正或文档技术细节误差，可通过本页联系魔法梯子编辑团队进行核查更正。"
+  canonicalPath="/contact/"
+>
+  <section class="bg-magic-hero border-b border-[#E2E8F0] py-10 sm:py-12">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ label: '首页', href: '/' }, { label: '联系与纠错' }]} />
+      <h1 class="text-3xl font-extrabold text-[#252D49] sm:text-4xl">联系我们与资料纠错</h1>
+      <p class="mt-3 text-base leading-relaxed text-[#334155]">
+        网络服务套餐价目、优惠码生效状态以及客户端订阅开放策略常随时间动态变化。我们非常欢迎读者提供可核验的更新线索。
+      </p>
+    </div>
+  </section>
+
+  <section class="py-10 sm:py-14">
+    <div class="mx-auto max-w-4xl space-y-6 px-4 sm:px-6 lg:px-8">
+      <div class="magic-card p-6 sm:p-8">
+        <h2 class="text-xl font-bold text-[#252D49]">纠错反馈渠道与受理范围</h2>
+        <p class="mt-3 text-sm leading-relaxed text-[#334155]">
+          编辑部联系邮箱：<code class="rounded bg-[#F0EBFF] px-2.5 py-1 font-bold text-[#5B48C4]">{SITE_CONFIG.contactEmail}</code>
+        </p>
+        <ul class="mt-4 list-disc space-y-2 pl-5 text-sm text-[#334155]">
+          <li><strong>套餐与优惠变更：</strong> 请附上对应品牌名称、最新价格截图或官方公告日期说明。</li>
+          <li><strong>客户端政策更新：</strong> 若某品牌恢复或暂停第三方 Clash/Shadowrocket 订阅支持，欢迎提交可验证的后台公告依据。</li>
+          <li><strong>开源软件信息修正：</strong> 若客户端支持的系统架构或官方仓库路径发生变动，欢迎附官方 Releases 页面参考链接。</li>
+        </ul>
+      </div>
+
+      <div class="rounded-2xl border border-amber-200 bg-amber-50/50 p-5 text-sm text-[#334155]">
+        <strong class="text-[#252D49]">温馨提示：</strong> 请勿在来信中发送您的个人账号密码、付款账单流水或包含私人 Token 的机场订阅链接。如果您遇到具体订单退款或登录问题，请直接登录所购机场用户中心联系其官方工单客服。
+      </div>
+    </div>
+  </section>
+</BaseLayout>

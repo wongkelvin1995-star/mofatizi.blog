@@ -1,0 +1,4 @@
+# Cloudflare Pages 域名规范与 301 重定向规则
+https://www.mofatizi.blog/* https://mofatizi.blog/:splat 301!
+http://mofatizi.blog/* https://mofatizi.blog/:splat 301!
+http://www.mofatizi.blog/* https://mofatizi.blog/:splat 301!

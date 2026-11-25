@@ -1,0 +1,117 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import BrandCard from '../../components/BrandCard.astro';
+import { ALL_BRANDS, ALL_COMPATIBILITY } from '../../data/registry';
+import { SITE_CONFIG } from '../../data/site-config';
+
+const compatMap = new Map(ALL_COMPATIBILITY.map((c) => [c.brandId, c]));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: '18 家机场品牌完整档案与客户端兼容性目录',
+  url: `${SITE_CONFIG.domain}/brands/`,
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: ALL_BRANDS.map((b, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: b.name,
+      url: `${SITE_CONFIG.domain}/brands/${b.slug}/`,
+    })),
+  },
+};
+---
+
+<BaseLayout
+  title="机场品牌大全：18家品牌套餐价目、优惠码与客户端兼容性档案｜魔法梯子"
+  description="完整收录 18 家机场品牌的官方资料档案、真实历史套餐价格、优惠码适用范围、官方客户端与 Clash 第三方订阅兼容政策。"
+  canonicalPath="/brands/"
+  jsonLd={jsonLd}
+>
+  <section class="bg-magic-hero border-b border-[#E2E8F0] py-10 sm:py-12">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ label: '首页', href: '/' }, { label: '机场品牌档案' }]} />
+      <span class="inline-flex rounded-full bg-[#F0EBFF] px-3 py-1 text-xs font-bold text-[#5B48C4]">
+        18 家品牌统一数据库 · 2026-11-25 校验
+      </span>
+      <h1 class="mt-3 text-3xl font-extrabold text-[#252D49] sm:text-4xl">
+        18 家机场品牌档案与客户端兼容筛选
+      </h1>
+      <p class="mt-3 max-w-3xl text-base text-[#334155]">
+        展示顺序依据站内编辑精选整理规范排列，非测速或稳定性排名。未提供某平台或 Clash 兼容证据的品牌，在对应筛选条件中绝不虚构呈现。
+      </p>
+
+      <div class="mt-5 flex flex-wrap gap-2" id="brands-page-filters">
+        {[
+          { id: 'all', label: '全部 18 家' },
+          { id: 'clash', label: '已确认 Clash 订阅 / 申请' },
+          { id: 'official', label: '提供官方客户端' },
+          { id: 'thirdParty', label: '有第三方兼容记录' },
+          { id: 'Linux', label: 'Linux 官方支持' },
+        ].map((f, idx) => (
+          <button
+            type="button"
+            data-bf={f.id}
+            class:list={[
+              'min-h-[40px] rounded-xl px-3.5 text-xs font-semibold transition',
+              idx === 0 ? 'bg-[#7664D9] text-white' : 'border border-[#E2E8F0] bg-white text-[#252D49] hover:border-[#7664D9]',
+            ]}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-magic-brands py-10 sm:py-14">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3" id="brands-page-grid">
+        {ALL_BRANDS.map((brand) => {
+          const compat = compatMap.get(brand.slug);
+          const hasLinux = Boolean(compat?.platforms?.Linux && !compat.platforms.Linux.includes('未获'));
+          return (
+            <div
+              class="bp-item"
+              data-clash={brand.confirmedClash ? '1' : '0'}
+              data-official={brand.hasOfficialClient ? '1' : '0'}
+              data-thirdparty={brand.confirmedThirdParty ? '1' : '0'}
+              data-linux={hasLinux ? '1' : '0'}
+            >
+              <BrandCard brand={brand} showFullReason={true} />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function () {
+      var wrap = document.getElementById('brands-page-filters');
+      var items = Array.from(document.querySelectorAll('.bp-item'));
+      if (!wrap || !items.length) return;
+      wrap.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-bf]');
+        if (!btn) return;
+        var mode = btn.getAttribute('data-bf');
+        wrap.querySelectorAll('[data-bf]').forEach(function (el) {
+          el.className = el === btn
+            ? 'min-h-[40px] rounded-xl px-3.5 text-xs font-semibold transition bg-[#7664D9] text-white'
+            : 'min-h-[40px] rounded-xl px-3.5 text-xs font-semibold transition border border-[#E2E8F0] bg-white text-[#252D49] hover:border-[#7664D9]';
+        });
+        items.forEach(function (el) {
+          var show =
+            mode === 'all' ||
+            (mode === 'clash' && el.getAttribute('data-clash') === '1') ||
+            (mode === 'official' && el.getAttribute('data-official') === '1') ||
+            (mode === 'thirdParty' && el.getAttribute('data-thirdparty') === '1') ||
+            (mode === 'Linux' && el.getAttribute('data-linux') === '1');
+          el.classList.toggle('hidden', !show);
+        });
+      });
+    })();
+  </script>
+</BaseLayout>

@@ -1,0 +1,61 @@
+---
+import { getEntry, render } from 'astro:content';
+import ArticleLayout from '../../../layouts/ArticleLayout.astro';
+import { SITE_CONFIG } from '../../../data/site-config';
+
+const entry = await getEntry('guides', 'reliable-ladder-guide');
+if (!entry) throw new Error('Missing reliable-ladder-guide');
+const { Content, headings } = await render(entry);
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: entry.data.title,
+    description: entry.data.description,
+    datePublished: entry.data.publishDate,
+    dateModified: entry.data.updatedDate,
+    author: { '@type': 'Organization', name: SITE_CONFIG.siteName },
+    mainEntityOfPage: `${SITE_CONFIG.domain}/recommend/reliable/`,
+  },
+  ...(entry.data.faqs.length
+    ? [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: entry.data.faqs.map((f) => ({
+            '@type': 'Question',
+            name: f.question,
+            acceptedAnswer: { '@type': 'Answer', text: f.answer },
+          })),
+        },
+      ]
+    : []),
+];
+---
+
+<ArticleLayout
+  title={entry.data.title}
+  h1={entry.data.title}
+  description={entry.data.description}
+  category={entry.data.category}
+  publishDate={entry.data.publishDate}
+  updatedDate={entry.data.updatedDate}
+  canonicalPath="/recommend/reliable/"
+  breadcrumbs={[
+    { label: '首页', href: '/' },
+    { label: '梯子推荐', href: '/recommend/' },
+    { label: '稳定梯子推荐' },
+  ]}
+  headings={headings}
+  faqs={entry.data.faqs}
+  sources={entry.data.sources}
+  relatedLinks={[
+    { label: '魔法机场推荐筛选', href: '/recommend/airports/', tag: '品牌筛选' },
+    { label: '高速连接技术因素', href: '/recommend/high-speed/', tag: '传输原理' },
+    { label: '购买订阅七项核查清单', href: '/guides/buy-subscription/', tag: '购买避坑' },
+  ]}
+  jsonLd={jsonLd}
+>
+  <Content />
+</ArticleLayout>

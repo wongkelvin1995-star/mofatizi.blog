@@ -1,0 +1,95 @@
+---
+import { getCollection, render } from 'astro:content';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { getBrandBySlug } from '../../data/registry';
+import { SITE_CONFIG } from '../../data/site-config';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('articles', ({ data }) => !data.draft);
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+const brand = entry.data.brand ? getBrandBySlug(entry.data.brand) : undefined;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: entry.data.title,
+    description: entry.data.description,
+    datePublished: entry.data.publishDate,
+    dateModified: entry.data.updatedDate,
+    author: { '@type': 'Organization', name: SITE_CONFIG.siteName },
+    mainEntityOfPage: `${SITE_CONFIG.domain}/articles/${entry.id}/`,
+  },
+  ...(entry.data.faqs.length
+    ? [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: entry.data.faqs.map((f) => ({
+            '@type': 'Question',
+            name: f.question,
+            acceptedAnswer: { '@type': 'Answer', text: f.answer },
+          })),
+        },
+      ]
+    : []),
+];
+---
+
+<ArticleLayout
+  title={entry.data.title}
+  h1={entry.data.title}
+  description={entry.data.description}
+  category={entry.data.category}
+  publishDate={entry.data.publishDate}
+  updatedDate={entry.data.updatedDate}
+  canonicalPath={`/articles/${entry.id}/`}
+  breadcrumbs={[
+    { label: '首页', href: '/' },
+    { label: '专题文章', href: '/articles/' },
+    { label: brand ? brand.name : entry.data.primaryKeyword },
+  ]}
+  headings={headings}
+  faqs={entry.data.faqs}
+  sources={entry.data.sources}
+  relatedLinks={[
+    ...(brand ? [{ label: `查看 ${brand.name} 完整品牌档案`, href: `/brands/${brand.slug}/`, tag: '品牌主页' }] : []),
+    ...(entry.data.relatedArticles || []).map((href) => ({
+      label: href.replace(/^\//, '').replace(/\/$/, '').replace(/\//g, ' · '),
+      href,
+      tag: '延伸阅读',
+    })),
+  ]}
+  jsonLd={jsonLd}
+>
+  {brand && (
+    <div class="not-prose mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#D8CEFF] bg-[#F8FAFF] p-4">
+      <div>
+        <div class="text-xs font-bold text-[#7664D9]">关联品牌档案 · #{brand.rank}</div>
+        <div class="text-base font-bold text-[#252D49]">{brand.name}（{brand.clashBadge}）</div>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <a href={`/brands/${brand.slug}/`} class="btn-magic-secondary min-h-[38px] px-3 py-1.5 text-xs">
+          全套餐与档案
+        </a>
+        <a
+          href={brand.affLink}
+          target="_blank"
+          rel="sponsored nofollow noopener noreferrer"
+          class="btn-magic-primary min-h-[38px] px-3 py-1.5 text-xs"
+        >
+          官网注册入口 ↗
+        </a>
+      </div>
+    </div>
+  )}
+
+  <Content />
+</ArticleLayout>

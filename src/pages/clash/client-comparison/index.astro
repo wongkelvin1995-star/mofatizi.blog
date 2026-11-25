@@ -1,0 +1,57 @@
+---
+import { getEntry, render } from 'astro:content';
+import ArticleLayout from '../../../layouts/ArticleLayout.astro';
+import { SITE_CONFIG } from '../../../data/site-config';
+
+const entry = await getEntry('guides', 'clash-client-comparison');
+if (!entry) throw new Error('Missing clash-client-comparison');
+const { Content, headings } = await render(entry);
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: entry.data.title,
+    description: entry.data.description,
+    datePublished: entry.data.publishDate,
+    dateModified: entry.data.updatedDate,
+    author: { '@type': 'Organization', name: SITE_CONFIG.siteName },
+    mainEntityOfPage: `${SITE_CONFIG.domain}/clash/client-comparison/`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: entry.data.faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  },
+];
+---
+
+<ArticleLayout
+  title={entry.data.title}
+  h1={entry.data.title}
+  description={entry.data.description}
+  category={entry.data.category}
+  publishDate={entry.data.publishDate}
+  updatedDate={entry.data.updatedDate}
+  canonicalPath="/clash/client-comparison/"
+  breadcrumbs={[
+    { label: '首页', href: '/' },
+    { label: 'Clash 知识中心', href: '/clash/' },
+    { label: 'Clash 客户端哪个好' },
+  ]}
+  headings={headings}
+  faqs={entry.data.faqs}
+  sources={entry.data.sources}
+  relatedLinks={[
+    { label: '打开客户端选择助手', href: '/clients/#client-assistant', tag: '交互工具' },
+    { label: 'Clash Verge Rev 教程', href: '/clients/clash-verge-rev/', tag: '桌面首选' },
+    { label: 'FlClash 使用指南', href: '/clients/flclash/', tag: 'Win+Android' },
+  ]}
+  jsonLd={jsonLd}
+>
+  <Content />
+</ArticleLayout>

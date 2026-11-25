@@ -1,0 +1,32 @@
+---
+export interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
+
+export interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav aria-label="面包屑导航" class="mb-5 flex flex-wrap items-center gap-1.5 text-sm text-[#64748B]">
+  {items.map((item, index) => (
+    <>
+      {index > 0 && <span aria-hidden="true" class="text-slate-300">/</span>}
+      {item.href ? (
+        <a
+          href={item.href}
+          class="inline-flex min-h-[32px] items-center rounded-md px-1 font-medium text-[#64748B] transition hover:text-[#5B48C4]"
+        >
+          {item.label}
+        </a>
+      ) : (
+        <span class="font-semibold text-[#252D49]" aria-current="page">
+          {item.label}
+        </span>
+      )}
+    </>
+  ))}
+</nav>

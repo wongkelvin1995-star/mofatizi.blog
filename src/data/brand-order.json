@@ -1,0 +1,182 @@
+[
+  {
+    "slug": "lingdongyun",
+    "rank": 1,
+    "name": "灵动云",
+    "nameEn": "LingDongYun",
+    "badge": "编辑精选 01",
+    "featuredOnHome": true,
+    "clashTier": "conditional",
+    "selectionReason": "29 档全周期套餐资料已逐档核对，提供 Windows/macOS/Android 官方客户端与 iOS Nextin（LDY）；高阶/达标订单可向客服申请第三方订阅"
+  },
+  {
+    "slug": "muguang-jiasu",
+    "rank": 2,
+    "name": "暮光加速",
+    "nameEn": "Twilight",
+    "badge": "编辑精选 02",
+    "featuredOnHome": true,
+    "clashTier": "unconfirmed",
+    "selectionReason": "覆盖年付轻量版、常规周期及三档不限时流量包共 21 条价格记录，提供用户中心桌面客户端指引"
+  },
+  {
+    "slug": "breezenet",
+    "rank": 3,
+    "name": "微风网络",
+    "nameEn": "Breezenet",
+    "badge": "编辑精选 03",
+    "featuredOnHome": true,
+    "clashTier": "conditional",
+    "selectionReason": "200GB/月起步常规档搭配清风年付小包，2026-11 档案包含 Clash Verge Rev/v2rayN/Shadowrocket VLESS 教程（购前建议确认订阅权限）"
+  },
+  {
+    "slug": "feimaoyun",
+    "rank": 4,
+    "name": "飞猫云",
+    "nameEn": "FlyCat",
+    "badge": "编辑精选 04",
+    "featuredOnHome": true,
+    "clashTier": "official_only",
+    "selectionReason": "涵盖 ¥84/年学生版、常规周期至 1TB 不限时包共 19 条记录；2026-10 公告暂停第三方订阅，主推官方客户端"
+  },
+  {
+    "slug": "flyv",
+    "rank": 5,
+    "name": "FLYV",
+    "nameEn": "FlyV",
+    "badge": "编辑精选 05",
+    "featuredOnHome": true,
+    "clashTier": "conditional",
+    "selectionReason": "21 档套餐于 2026-10-31 逐档核对，新用户首单可用 fly20 享 8 折，提供官方四端教程导航"
+  },
+  {
+    "slug": "wavenet",
+    "rank": 6,
+    "name": "浪网",
+    "nameEn": "WaveNet",
+    "badge": "编辑精选 06",
+    "featuredOnHome": true,
+    "clashTier": "unconfirmed",
+    "selectionReason": "主打 150GB–2000GB/月大流量档位，Android 推荐 v2rayNG，iOS 推荐 Nextin，桌面端提供后台客户端指引"
+  },
+  {
+    "slug": "yinxingren",
+    "rank": 7,
+    "name": "隐形人",
+    "nameEn": "Invisible",
+    "badge": "编辑精选 07",
+    "featuredOnHome": true,
+    "clashTier": "unconfirmed",
+    "selectionReason": "星耀风暴年包至 1600GB/月钻石周期共 14 档记录，后台提供 Windows/macOS/Android/iOS 客户端下载入口"
+  },
+  {
+    "slug": "wuyou",
+    "rank": 8,
+    "name": "无忧链接",
+    "nameEn": "WorryFree",
+    "badge": "编辑精选 08",
+    "featuredOnHome": true,
+    "clashTier": "official_only",
+    "selectionReason": "包含 ¥79/年 MINI 链接及四档周期与不限时包；2026-10 起新订单主推官方专属客户端"
+  },
+  {
+    "slug": "firefly",
+    "rank": 9,
+    "name": "Firefly",
+    "nameEn": "Firefly",
+    "badge": "编辑精选 09",
+    "featuredOnHome": true,
+    "clashTier": "official_only",
+    "selectionReason": "飞为提供 ¥96/年小包与 Lite 至 Nova 周期档；2026-10 起新订单采用官方专属客户端接入"
+  },
+  {
+    "slug": "quanqiuyun",
+    "rank": 10,
+    "name": "全球云",
+    "nameEn": "GlobalCloud",
+    "badge": "编辑精选 10",
+    "featuredOnHome": true,
+    "clashTier": "conditional",
+    "selectionReason": "21 档周期与不限时报价覆盖亚欧多地区，2026-11 档案提供 Clash Verge Rev/v2rayN/Shadowrocket 导入指引"
+  },
+  {
+    "slug": "v2yun",
+    "rank": 11,
+    "name": "唯兔云",
+    "nameEn": "V2Yun",
+    "badge": "编辑精选 11",
+    "featuredOnHome": true,
+    "clashTier": "official_only",
+    "selectionReason": "25 档价格记录覆盖 ¥79.9 年付限量款与三档永久包；2026-10 公告主推官方客户端"
+  },
+  {
+    "slug": "lingmao",
+    "rank": 12,
+    "name": "灵猫",
+    "nameEn": "CivetNet",
+    "badge": "编辑精选 12",
+    "featuredOnHome": true,
+    "clashTier": "official_only",
+    "selectionReason": "提供 ¥85/年小包及 Small/Big 周期套餐，主推专属桌面客户端、Android 官方客户端与 iOS Nextin（lmwl）"
+  },
+  {
+    "slug": "flashleap",
+    "rank": 13,
+    "name": "闪跃",
+    "nameEn": "FlashLeap",
+    "badge": "编辑精选 13",
+    "featuredOnHome": false,
+    "clashTier": "official_only",
+    "selectionReason": "覆盖 ¥96/年轻量版与闪动至跃迁周期套餐，新订单采用官方专属客户端及 iOS Nextin（sywl）"
+  },
+  {
+    "slug": "laddercloud",
+    "rank": 14,
+    "name": "梯子云",
+    "nameEn": "LadderCloud",
+    "badge": "编辑精选 14",
+    "featuredOnHome": false,
+    "clashTier": "unconfirmed",
+    "selectionReason": "按套餐等级区分基础/BGP/IEPL 线路，提供 ¥89/年保活方案与四端用户中心指引"
+  },
+  {
+    "slug": "lightspeed",
+    "rank": 15,
+    "name": "光速云",
+    "nameEn": "LightSpeed",
+    "badge": "编辑精选 15",
+    "featuredOnHome": false,
+    "clashTier": "official_only",
+    "selectionReason": "覆盖 10+ 国家/地区节点与美国原生家宽定制，官网主推全平台官方客户端（含 Linux）"
+  },
+  {
+    "slug": "u1s1",
+    "rank": 16,
+    "name": "U1S1",
+    "nameEn": "U1S1",
+    "badge": "编辑精选 16",
+    "featuredOnHome": false,
+    "clashTier": "verified_tutorial",
+    "selectionReason": "有一说一提供 17 条价格记录，2026-11 公开用户后台教程支持复制订阅导入 Clash Verge Rev、v2rayN、Shadowrocket"
+  },
+  {
+    "slug": "sogoyun",
+    "rank": 17,
+    "name": "Sogo云",
+    "nameEn": "SOGO Cloud",
+    "badge": "编辑精选 17",
+    "featuredOnHome": false,
+    "clashTier": "official_only",
+    "selectionReason": "含小包年付、常规周期与四档不限时流量包共 17 条记录，品牌展示页主推四端官方客户端"
+  },
+  {
+    "slug": "kuajie",
+    "rank": 18,
+    "name": "跨界",
+    "nameEn": "KuaJie",
+    "badge": "编辑精选 18",
+    "featuredOnHome": false,
+    "clashTier": "conditional",
+    "selectionReason": "公开说明新人码 kuajie 全场 8 折；存在官方客户端与需向客服索取通用订阅的双版本记录"
+  }
+]

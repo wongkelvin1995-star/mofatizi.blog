@@ -1,0 +1,36 @@
+{
+  "name": "mofatizi.blog",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "魔法梯子 mofatizi.blog — Magic Ladder ULTIMATE MAX · 极境魔法知识商业旗舰：梯子推荐、魔法上网知识、Clash客户端教程与18家机场品牌深度指南",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build:data": "node scripts/build-data.mjs",
+    "build:search": "node scripts/build-search-index.mjs",
+    "prebuild": "node scripts/build-data.mjs && node scripts/build-search-index.mjs",
+    "build": "astro build && node scripts/postbuild.mjs",
+    "preview": "astro preview",
+    "check": "astro check",
+    "verify": "node scripts/verify-site.mjs",
+    "indexnow": "node scripts/indexnow.mjs",
+    "indexnow:submit": "node scripts/indexnow.mjs --submit"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.0",
+    "@tailwindcss/typography": "^0.5.16",
+    "@tailwindcss/vite": "^4.1.4",
+    "astro": "^5.18.2",
+    "tailwindcss": "^4.1.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "node-html-parser": "^7.0.1",
+    "sharp": "^0.34.1",
+    "typescript": "^5.8.3"
+  }
+}

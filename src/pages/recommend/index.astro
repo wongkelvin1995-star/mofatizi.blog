@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+
+const cards = [
+  {
+    title: '魔法机场推荐（18家品牌筛选）',
+    desc: '结合官方客户端、第三方 Clash 订阅政策、适用协议与价格门槛对 18 家真实档案品牌进行筛选对比。',
+    href: '/recommend/airports/',
+    tag: '机场选型主入口',
+  },
+  {
+    title: '稳定梯子选择指南',
+    desc: '不搞虚构测速榜单！从 BGP/IEPL/IPLC 架构、客户端稳定性、双线容灾方案解释稳定连接原理。',
+    href: '/recommend/reliable/',
+    tag: '架构与连续性',
+  },
+  {
+    title: '低预算梯子选择逻辑',
+    desc: '拆解客户端隐藏成本、入门月付试错、轻量年付小包与不限时总量包的适用前提。',
+    href: '/recommend/budget/',
+    tag: '预算与工具形态',
+  },
+  {
+    title: '高速连接知识与排查',
+    desc: '科普本地宽带、中转协议开销、UDP/TCP 差异与系统代理/TUN 调优对吞吐的真实影响。',
+    href: '/recommend/high-speed/',
+    tag: '传输吞吐原理',
+  },
+  {
+    title: 'VPN 与加速器选择指南',
+    desc: '理清传统 VPN、游戏加速器与代理机场之间的功能边界与隐私核查标准。',
+    href: '/vpn/',
+    tag: '工具边界科普',
+  },
+  {
+    title: 'Clash 兼容机场推荐专区',
+    desc: '严格依据 2026-11 证据筛选明确支持或有条件申请 Clash/Mihomo 订阅的品牌名录。',
+    href: '/clash/airports/',
+    tag: 'Clash 订阅核验',
+  },
+];
+---
+
+<BaseLayout
+  title="梯子推荐专栏：机场选型、稳定原理、低预算方案与VPN指南｜魔法梯子"
+  description="魔法梯子梯子推荐总专栏：汇总魔法机场推荐、稳定梯子技术原理、低预算选择逻辑、高速传输因素与 VPN 工具选型指南。"
+  canonicalPath="/recommend/"
+>
+  <section class="bg-magic-hero border-b border-[#E2E8F0] py-10 sm:py-12">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ label: '首页', href: '/' }, { label: '梯子推荐专栏' }]} />
+      <h1 class="text-3xl font-extrabold text-[#252D49] sm:text-4xl">魔法梯子选型与推荐专栏</h1>
+      <p class="mt-3 max-w-3xl text-base text-[#334155]">
+        围绕不同使用场景与客户端需求，提供基于可追溯资料的机场筛选、网络工具原理与成本规划入口。本站不发布虚构测速排行，所有决策指标均有公开资料依据。
+      </p>
+    </div>
+  </section>
+
+  <section class="py-10 sm:py-14">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {cards.map((c) => (
+          <a href={c.href} class="magic-card flex flex-col justify-between p-6">
+            <div>
+              <span class="rounded-full bg-[#F0EBFF] px-3 py-1 text-xs font-bold text-[#5B48C4]">{c.tag}</span>
+              <h2 class="mt-3 text-xl font-bold text-[#252D49]">{c.title}</h2>
+              <p class="mt-2 text-sm leading-relaxed text-[#64748B]">{c.desc}</p>
+            </div>
+            <span class="mt-5 text-sm font-bold text-[#5B48C4]">进入专题阅读 →</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

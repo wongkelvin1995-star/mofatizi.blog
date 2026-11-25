@@ -1,0 +1,158 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import BrandCard from '../../../components/BrandCard.astro';
+import FaqAccordion from '../../../components/FaqAccordion.astro';
+import { ALL_BRANDS } from '../../../data/registry';
+import { SITE_CONFIG } from '../../../data/site-config';
+
+// Strictly classify based on Section 18 rules!
+const clashReadyBrands = ALL_BRANDS.filter((b) => b.clashSupportStatus === 'verified_tutorial');
+const conditionalClashBrands = ALL_BRANDS.filter((b) => b.clashSupportStatus === 'conditional_apply');
+const nonClashBrands = ALL_BRANDS.filter(
+  (b) => !['verified_tutorial', 'conditional_apply'].includes(b.clashSupportStatus)
+);
+
+const faqs = [
+  {
+    question: '为什么很多榜单把 18 家机场全部写支持 Clash，而你们只把少数几家列为兼容候选？',
+    answer: '根据 2026-10 至 2026-11 的最新资料核对，包括飞猫云、唯兔云、灵猫、无忧链接、Firefly、闪跃、光速云、Sogo云在内的多家品牌已发布暂停第三方通用订阅公告或新订单全面切换官方客户端。将它们列为 Clash 推荐会直接误导依赖 Clash Verge Rev 或 OpenClash 的用户。',
+  },
+  {
+    question: '有条件申请（如灵动云、微风网络、全球云、跨界）是什么意思？',
+    answer: '代表该品牌在档案中有第三方订阅或 Clash 教程记录，但存在具体门槛或政策版本差异：例如灵动云客服 2026-11-24 说明需订单金额 ≥ ¥200 才可联系客服申请；跨界与微风网络在不同月份资料中出现官方端与通用订阅双记录。购买前必须在用户中心先核对当前订单权限。',
+  },
+  {
+    question: '兼容 Clash 机场提供的订阅一般是什么协议？旧 Clash 还能用吗？',
+    answer: '如 U1S1、微风网络、全球云、灵动云的 2026-11 后台样本均记录包含 VLESS 协议。早已停止更新的原版 Clash for Windows 无法识别 VLESS 节点，必须使用基于 Mihomo 内核的新版 Clash Verge Rev、Clash Party 或 FlClash。',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Clash机场推荐：经核验兼容Clash/Mihomo订阅的机场品牌目录',
+    url: `${SITE_CONFIG.domain}/clash/airports/`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="Clash机场推荐：2026经核验支持Clash/Mihomo订阅的品牌目录｜魔法梯子"
+  description="严格依据 2026-11 品牌档案筛选真正开放或支持申请 Clash/Mihomo 第三方订阅的机场品牌，明确区分官方专属客户端品牌与适用套餐条件，防止买错无法导入。"
+  canonicalPath="/clash/airports/"
+  jsonLd={jsonLd}
+>
+  <section class="bg-magic-hero border-b border-[#E2E8F0] py-10 sm:py-12">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ label: '首页', href: '/' }, { label: 'Clash 知识中心', href: '/clash/' }, { label: 'Clash 机场推荐' }]} />
+      <span class="inline-flex rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-bold text-emerald-800">
+        KW 101 · 严格依据兼容性证据筛选
+      </span>
+      <h1 class="mt-3 text-3xl font-extrabold text-[#252D49] sm:text-4xl">
+        2026 Clash 机场推荐与第三方订阅政策核查
+      </h1>
+      <p class="mt-3 max-w-3xl text-base leading-relaxed text-[#334155]">
+        并非所有机场都支持导入 Clash。本站拒绝「默认 18 家全部支持 Clash」的虚假宣传，严格按照 2026-10 至 2026-11 资料档案拆分为<strong>「后台明确教程支持」</strong>、<strong>「达标申请或双版本记录」</strong>以及<strong>「主推官方客户端/已暂停通用订阅（不纳入推荐）」</strong>三组清晰呈现。
+      </p>
+    </div>
+  </section>
+
+  <section class="py-10 sm:py-14">
+    <div class="mx-auto max-w-7xl space-y-12 px-4 sm:px-6 lg:px-8">
+      <!-- Group 1: Verified Tutorial -->
+      <div>
+        <div class="mb-5">
+          <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-900">
+            第一梯队 · 后台明确支持第三方订阅导入教程
+          </span>
+          <h2 class="mt-2 text-2xl font-bold text-[#252D49]">有明确用户后台复制订阅导入教程的品牌</h2>
+          <p class="mt-1 text-sm text-[#64748B]">
+            2026-11 公开档案明确记载用户后台教程支持复制订阅链接导入 Clash Verge Rev、Clash Meta 等客户端（因存在 VLESS 节点，请确保使用 Mihomo 内核新版客户端）。
+          </p>
+        </div>
+        <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {clashReadyBrands.map((b) => (
+            <BrandCard brand={b} showFullReason={true} />
+          ))}
+        </div>
+      </div>
+
+      <!-- Group 2: Conditional / Dual-version -->
+      <div>
+        <div class="mb-5">
+          <span class="rounded-full bg-[#F0EBFF] px-3 py-1 text-xs font-bold text-[#5B48C4]">
+            第二梯队 · 有条件申请或存在版本政策差异（购前需向后台/客服核实）
+          </span>
+          <h2 class="mt-2 text-2xl font-bold text-[#252D49]">达标可申请或记录双版本说明的品牌</h2>
+          <p class="mt-1 text-sm text-[#64748B]">
+            以下品牌具备 Clash 使用指南或客服申请机制，但部分限制适用金额/套餐（如灵动云客服口径需订单达 ¥200 以上申请），或者在 10 月与 11 月档案间存在政策口径差异，下单前务必先确认当期权限。
+          </p>
+        </div>
+        <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {conditionalClashBrands.map((b) => (
+            <BrandCard brand={b} showFullReason={true} />
+          ))}
+        </div>
+      </div>
+
+      <!-- Group 3: Explicitly excluded from Clash recommendation -->
+      <div class="rounded-3xl border border-amber-200 bg-amber-50/40 p-6 sm:p-8">
+        <h2 class="text-xl font-bold text-[#252D49]">提示：以下品牌当前不列入 Clash 兼容推荐名单</h2>
+        <p class="mt-1.5 text-sm text-[#334155]">
+          根据 2026-10 至 2026-11 档案核对，以下 {nonClashBrands.length} 家品牌主推官方专属客户端、iOS Nextin 或发布过暂停通用订阅公告，或者缺乏可证实的 Clash 开放证据。如果你只希望用品牌官方软件，可点击品牌名查看详情；如果必须在 Clash Verge Rev 或 OpenClash 中导入，请勿默认选择以下品牌：
+        </p>
+        <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {nonClashBrands.map((b) => (
+            <a
+              href={`/brands/${b.slug}/`}
+              class="flex flex-col justify-between rounded-2xl border border-[#E2E8F0] bg-white p-4 transition hover:border-[#7664D9]"
+            >
+              <div>
+                <div class="flex items-center justify-between gap-2">
+                  <span class="font-bold text-[#252D49]">{b.name}</span>
+                  <span class="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-900">
+                    {b.clashBadge}
+                  </span>
+                </div>
+                <p class="mt-1.5 text-xs text-[#64748B]">{b.thirdPartySubscriptionPolicy}</p>
+              </div>
+              <span class="mt-2.5 text-xs font-semibold text-[#5B48C4]">核对官方客户端详情 →</span>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Subscription Security & Next Steps -->
+      <div class="grid gap-5 md:grid-cols-3">
+        <a href="/clash/subscription/" class="magic-card p-5">
+          <h3 class="text-base font-bold text-[#252D49]">1. 看懂 Clash 订阅与安全</h3>
+          <p class="mt-1.5 text-xs text-[#64748B]">了解 YAML 配置结构、Traffic 流量同步头与防泄露保护。</p>
+        </a>
+        <a href="/clash/import/" class="magic-card p-5">
+          <h3 class="text-base font-bold text-[#252D49]">2. Clash 节点导入步骤</h3>
+          <p class="mt-1.5 text-xs text-[#64748B]">复制 URL 粘贴导入、浏览器一键唤起与本地文件导入。</p>
+        </a>
+        <a href="/clash/client-comparison/" class="magic-card p-5">
+          <h3 class="text-base font-bold text-[#252D49]">3. Clash 客户端哪个好？</h3>
+          <p class="mt-1.5 text-xs text-[#64748B]">Verge Rev、Party、FlClash 与 OpenClash 横向比较。</p>
+        </a>
+      </div>
+
+      <div class="rounded-3xl border border-[#E2E8F0] bg-white p-6 shadow-xs sm:p-8">
+        <h2 class="mb-4 text-xl font-bold text-[#252D49]">Clash 机场常见疑问（FAQ）</h2>
+        <FaqAccordion items={faqs} />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

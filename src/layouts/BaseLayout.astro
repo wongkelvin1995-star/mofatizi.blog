@@ -1,0 +1,106 @@
+---
+import '../styles/global.css';
+import SeoHead from '../components/SeoHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SearchModal from '../components/SearchModal.astro';
+
+export interface Props {
+  title: string;
+  description: string;
+  canonicalPath?: string;
+  ogType?: 'website' | 'article';
+  ogImage?: string;
+  noindex?: boolean;
+  publishDate?: string;
+  updatedDate?: string;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  preloadHero?: boolean;
+}
+
+const props = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <SeoHead {...props} />
+    {props.preloadHero && (
+      <link rel="preload" as="image" href="/illustrations/hero-magical-girl.webp" media="(min-width: 768px)" />
+    )}
+  </head>
+  <body class="flex min-h-screen flex-col bg-[#F8FAFF] text-[#334155]">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-xl focus:bg-[#7664D9] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
+    >
+      跳至正文内容
+    </a>
+
+    <Header />
+
+    <main id="main-content" class="flex-1">
+      <slot />
+    </main>
+
+    <Footer />
+    <SearchModal />
+
+    <script is:inline>
+      (function () {
+        if (!window.__mlCopyBound) {
+          window.__mlCopyBound = true;
+          document.addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-copy-code]');
+            if (!btn) return;
+            var code = btn.getAttribute('data-copy-code');
+            if (!code) return;
+            var markDone = function () {
+              var prev = btn.textContent;
+              btn.textContent = '已复制 ✓';
+              setTimeout(function () { btn.textContent = prev; }, 1600);
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(code).then(markDone).catch(function () {
+                var ta = document.createElement('textarea');
+                ta.value = code;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                try { document.execCommand('copy'); markDone(); } catch (_) {}
+                document.body.removeChild(ta);
+              });
+            } else {
+              var ta = document.createElement('textarea');
+              ta.value = code;
+              ta.style.position = 'fixed';
+              ta.style.opacity = '0';
+              document.body.appendChild(ta);
+              ta.select();
+              try { document.execCommand('copy'); markDone(); } catch (_) {}
+              document.body.removeChild(ta);
+            }
+          });
+        }
+
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        if (window.innerWidth < 768) return;
+        var ticking = false;
+        window.addEventListener(
+          'scroll',
+          function () {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(function () {
+              var progress = Math.min(window.scrollY / 600, 1);
+              document.documentElement.style.setProperty('--hero-scroll', progress.toFixed(3));
+              ticking = false;
+            });
+          },
+          { passive: true }
+        );
+      })();
+    </script>
+  </body>
+</html>

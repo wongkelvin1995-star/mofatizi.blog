@@ -1,0 +1,93 @@
+---
+import type { CouponInfo, PlanRecord } from '../types/airport';
+import { calculatePlanMetrics, formatYuan } from '../utils/pricing';
+
+export interface Props {
+  plans: PlanRecord[];
+  primaryCoupon?: CouponInfo | null;
+  priceRecordDate: string;
+}
+
+const { plans, primaryCoupon = null, priceRecordDate } = Astro.props;
+const categoryLabelMap: Record<string, string> = {
+  regular: '常规周期',
+  annual_lite: '年付轻量',
+  one_time: '一次性流量',
+  dedicated: '独享定制',
+};
+---
+
+<div class="table-scroll-wrap rounded-2xl border border-[#E2E8F0] bg-white shadow-xs">
+  <table class="min-w-[760px] w-full border-collapse text-left text-sm">
+    <thead>
+      <tr class="border-b border-[#E2E8F0] bg-[#F0EBFF] text-xs font-bold text-[#252D49]">
+        <th class="px-4 py-3">套餐名称</th>
+        <th class="px-3 py-3">计费周期</th>
+        <th class="px-3 py-3">原价（整期实付）</th>
+        <th class="px-3 py-3">确认折后参考</th>
+        <th class="px-3 py-3">折合月均</th>
+        <th class="px-3 py-3">流量额度</th>
+        <th class="px-3 py-3">重置与备注</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-[#E2E8F0] text-[#334155]">
+      {plans.map((plan) => {
+        const m = calculatePlanMetrics(plan, primaryCoupon);
+        return (
+          <tr class="transition hover:bg-[#F8FAFF]">
+            <td class="px-4 py-3 font-semibold text-[#252D49]">
+              <div>{plan.planName}</div>
+              <span class="mt-0.5 inline-block rounded bg-[#EAF5FF] px-1.5 py-0.5 text-[11px] font-medium text-[#252D49]">
+                {categoryLabelMap[plan.category] || plan.category}
+              </span>
+            </td>
+            <td class="px-3 py-3 whitespace-nowrap">{plan.cycleLabel}</td>
+            <td class="px-3 py-3 whitespace-nowrap font-bold text-[#252D49]">
+              {formatYuan(m.originalPrice)}
+            </td>
+            <td class="px-3 py-3 whitespace-nowrap">
+              {m.hasConfirmedDiscount && m.discountedPrice !== null ? (
+                <div>
+                  <span class="font-bold text-[#5B48C4]">{formatYuan(m.discountedPrice)}</span>
+                  <span class="ml-1 rounded bg-[#F0EBFF] px-1.5 py-0.5 text-[11px] font-semibold text-[#5B48C4]">
+                    用码 {m.appliedCouponCode}
+                  </span>
+                </div>
+              ) : (
+                <span class="text-xs text-[#64748B]">按原价或结算页核实</span>
+              )}
+            </td>
+            <td class="px-3 py-3 whitespace-nowrap text-xs">
+              {m.effectiveMonthlyAvg !== null ? (
+                <span>
+                  {formatYuan(m.effectiveMonthlyAvg)}/月
+                  {plan.cycleMonths && plan.cycleMonths > 1 && (
+                    <span class="block text-[11px] text-[#64748B]">
+                      需整期预付 {formatYuan(m.effectivePayable)}
+                    </span>
+                  )}
+                </span>
+              ) : (
+                <span class="text-[#64748B]">按总量用完为止</span>
+              )}
+            </td>
+            <td class="px-3 py-3 whitespace-nowrap font-medium text-[#252D49]">
+              {plan.monthlyTrafficGB !== null
+                ? `${plan.monthlyTrafficGB} GB/月`
+                : plan.totalPeriodGB !== null
+                  ? `总量 ${plan.totalPeriodGB} GB`
+                  : '按方案约定'}
+            </td>
+            <td class="px-3 py-3 text-xs text-[#64748B]">
+              <div>{plan.resetRule}</div>
+              {plan.notes && <div class="mt-0.5 text-[#334155]">{plan.notes}</div>}
+            </td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+</div>
+<p class="mt-2.5 text-xs text-[#64748B]">
+  注：以上套餐为 {priceRecordDate} 公开档案记录，长期套餐折算月均金额须一次性预付整期金额；实际在售档位与结算优惠请以服务商下单页实时显示为准。
+</p>

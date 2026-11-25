@@ -1,0 +1,57 @@
+---
+import { getEntry, render } from 'astro:content';
+import ArticleLayout from '../../../layouts/ArticleLayout.astro';
+import { SITE_CONFIG } from '../../../data/site-config';
+
+const entry = await getEntry('guides', 'clash-import');
+if (!entry) throw new Error('Missing clash-import');
+const { Content, headings } = await render(entry);
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: entry.data.title,
+    description: entry.data.description,
+    datePublished: entry.data.publishDate,
+    dateModified: entry.data.updatedDate,
+    author: { '@type': 'Organization', name: SITE_CONFIG.siteName },
+    mainEntityOfPage: `${SITE_CONFIG.domain}/clash/import/`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: entry.data.faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  },
+];
+---
+
+<ArticleLayout
+  title={entry.data.title}
+  h1={entry.data.title}
+  description={entry.data.description}
+  category={entry.data.category}
+  publishDate={entry.data.publishDate}
+  updatedDate={entry.data.updatedDate}
+  canonicalPath="/clash/import/"
+  breadcrumbs={[
+    { label: '首页', href: '/' },
+    { label: 'Clash 知识中心', href: '/clash/' },
+    { label: 'Clash 节点导入教程' },
+  ]}
+  headings={headings}
+  faqs={entry.data.faqs}
+  sources={entry.data.sources}
+  relatedLinks={[
+    { label: 'Clash 订阅原理与安全', href: '/clash/subscription/', tag: '订阅知识' },
+    { label: 'Clash 规则与全局模式', href: '/clash/modes/', tag: '模式设置' },
+    { label: 'Clash Verge Rev 教程', href: '/clients/clash-verge-rev/', tag: '桌面端百科' },
+  ]}
+  jsonLd={jsonLd}
+>
+  <Content />
+</ArticleLayout>

@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# 仅排除未上线草稿或后台工具目录（搜索页 /search/ 允许抓取以便读取 meta noindex，避免 robots 阻断指令读取）
+Disallow: /_astro/*.map
+
+Sitemap: https://mofatizi.blog/sitemap.xml
+Sitemap: https://mofatizi.blog/sitemap-index.xml

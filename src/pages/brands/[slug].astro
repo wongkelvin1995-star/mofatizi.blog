@@ -1,0 +1,401 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PlanTable from '../../components/PlanTable.astro';
+import FaqAccordion from '../../components/FaqAccordion.astro';
+import { ALL_BRANDS, getCompatibilityByBrandId } from '../../data/registry';
+import { SITE_CONFIG } from '../../data/site-config';
+import { getPrimaryCalculableCoupon } from '../../utils/pricing';
+
+export function getStaticPaths() {
+  return ALL_BRANDS.map((brand) => ({
+    params: { slug: brand.slug },
+    props: { brand },
+  }));
+}
+
+const { brand } = Astro.props;
+const compat = getCompatibilityByBrandId(brand.slug);
+const primaryCoupon = getPrimaryCalculableCoupon(brand.coupons);
+const allArticles = await getCollection('articles', ({ data }) => !data.draft);
+const brandArticles = allArticles.filter(
+  (a) => a.data.brand === brand.slug || (a.data.relatedBrands || []).includes(brand.slug)
+);
+
+const tocSections = [
+  { id: 'overview', label: '1. 品牌简介与定位' },
+  { id: 'before-buy', label: '2. 购买前必读说明' },
+  { id: 'plans', label: '3. 全部真实套餐与价格' },
+  ...(brand.coupons.length ? [{ id: 'coupons', label: '4. 优惠码与规则记录' }] : []),
+  { id: 'clients', label: '5. 客户端与 Clash 兼容性' },
+  { id: 'network', label: '6. 协议、线路与节点地区' },
+  ...(brand.aiSupport.length || brand.streamingSupport.length ? [{ id: 'ai-streaming', label: '7. AI 与流媒体宣传说明' }] : []),
+  { id: 'suitability', label: '8. 适合人群与客观限制' },
+  { id: 'after-sales', label: '9. 退款、续费与客服' },
+  ...(brand.faqs.length ? [{ id: 'faq', label: '10. 常见问题 FAQ' }] : []),
+  { id: 'sources', label: '11. 资料来源与记录日期' },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: `${brand.name}怎么样？品牌档案、套餐价格与客户端兼容性全解`,
+    description: brand.summary,
+    datePublished: brand.priceRecordDate,
+    dateModified: brand.lastUpdatedDate,
+    author: { '@type': 'Organization', name: SITE_CONFIG.siteName },
+    mainEntityOfPage: `${SITE_CONFIG.domain}/brands/${brand.slug}/`,
+  },
+  ...(brand.faqs.length
+    ? [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: brand.faqs.map((f) => ({
+            '@type': 'Question',
+            name: f.question,
+            acceptedAnswer: { '@type': 'Answer', text: f.answer },
+          })),
+        },
+      ]
+    : []),
+];
+---
+
+<BaseLayout
+  title={`${brand.name}(${brand.englishName})怎么样？套餐价格、客户端支持与购买指南｜魔法梯子`}
+  description={`${brand.name}深度品牌档案：${brand.summary}`}
+  canonicalPath={`/brands/${brand.slug}/`}
+  ogType="article"
+  publishDate={brand.priceRecordDate}
+  updatedDate={brand.lastUpdatedDate}
+  jsonLd={jsonLd}
+>
+  <div class="bg-magic-articles py-8 sm:py-10">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <Breadcrumbs
+        items={[
+          { label: '首页', href: '/' },
+          { label: '机场品牌', href: '/brands/' },
+          { label: brand.name },
+        ]}
+      />
+
+      <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
+        <!-- Main Dossier Article -->
+        <article class="min-w-0 space-y-8 rounded-3xl border border-[#E2E8F0] bg-white p-5 shadow-xs sm:p-8 lg:p-10">
+          <!-- Header -->
+          <header class="border-b border-[#E2E8F0] pb-6">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="rounded-full bg-[#F0EBFF] px-3 py-1 text-xs font-bold text-[#5B48C4]">
+                #{brand.rank} · {brand.badge}
+              </span>
+              <span class="rounded-full bg-[#EAF5FF] px-3 py-1 text-xs font-semibold text-[#252D49]">
+                {brand.clashBadge}
+              </span>
+            </div>
+
+            <h1 class="mt-4 text-2xl font-extrabold text-[#252D49] sm:text-3xl lg:text-4xl">
+              {brand.name}（{brand.englishName}）怎么样？套餐、客户端与购买完整指南
+            </h1>
+            <p class="mt-3 text-base leading-relaxed text-[#64748B]">{brand.summary}</p>
+
+            <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-[#64748B]">
+              <span>别名：{brand.aliases.join(' / ')}</span>
+              <span>价目记录日期：<time datetime={brand.priceRecordDate}>{brand.priceRecordDate}</time></span>
+              <span>档案更新：<time datetime={brand.lastUpdatedDate}>{brand.lastUpdatedDate}</time></span>
+            </div>
+
+            <!-- Mobile Collapsible TOC -->
+            <details class="mt-5 rounded-2xl border border-[#E2E8F0] bg-[#F8FAFF] p-4 lg:hidden">
+              <summary class="cursor-pointer text-sm font-bold text-[#252D49]">展开本品牌档案目录</summary>
+              <ul class="mt-2.5 space-y-1.5 text-sm">
+                {tocSections.map((s) => (
+                  <li><a href={`#${s.id}`} class="text-[#334155] hover:text-[#5B48C4]">{s.label}</a></li>
+                ))}
+              </ul>
+            </details>
+          </header>
+
+          <!-- 1. Overview & Positioning -->
+          <section id="overview" class="space-y-3 scroll-mt-24">
+            <h2 class="text-xl font-bold text-[#252D49]">1. 品牌简介与服务定位</h2>
+            <p class="text-sm leading-relaxed text-[#334155] sm:text-base">
+              <strong>核心定位：</strong>{brand.positioning}。{brand.establishedNote}。
+            </p>
+            {brand.officialSiteUrl && (
+              <p class="text-sm text-[#334155]">
+                <strong>展示站点记录：</strong>
+                <code class="rounded bg-[#F8FAFF] px-2 py-0.5 text-xs text-[#252D49]">{brand.officialSiteUrl}</code>
+                {brand.officialSiteNote && <span class="ml-1 text-xs text-[#64748B]">（{brand.officialSiteNote}）</span>}
+              </p>
+            )}
+          </section>
+
+          <!-- 2. Before you buy -->
+          <section id="before-buy" class="rounded-2xl border border-[#D8CEFF] bg-[#F8FAFF] p-5 scroll-mt-24">
+            <h2 class="text-lg font-bold text-[#252D49]">2. 购买前应重点了解的事实说明</h2>
+            <ul class="mt-3 space-y-2 text-sm leading-relaxed text-[#334155]">
+              <li><strong>• 客户端路线：</strong>{brand.thirdPartySubscriptionPolicy}</li>
+              <li><strong>• 设备与并发限制：</strong>{brand.deviceLimitSummary}</li>
+              <li><strong>• 流量重置与倍率：</strong>{brand.trafficResetSummary}；{brand.multiplierSummary}。</li>
+              {brand.priceConflictNote && (
+                <li><strong>• 价格/规格记录差异提示：</strong>{brand.priceConflictNote}</li>
+              )}
+              <li><strong>• 信息性质声明：</strong>本站整理的所有路线、流媒体及 AI 说明均来自标明日期的品牌公开页面或第三方可追溯记录，非本站独立测速报告。</li>
+            </ul>
+          </section>
+
+          <!-- 3. Real Plans Table -->
+          <section id="plans" class="space-y-4 scroll-mt-24">
+            <h2 class="text-xl font-bold text-[#252D49]">3. 全部真实套餐价格与付款周期（共 {brand.plans.length} 档记录）</h2>
+            <p class="text-sm text-[#64748B]">{brand.priceSourceNote}</p>
+            <PlanTable plans={brand.plans} primaryCoupon={primaryCoupon} priceRecordDate={brand.priceRecordDate} />
+          </section>
+
+          <!-- 4. Coupons -->
+          {brand.coupons.length > 0 && (
+            <section id="coupons" class="space-y-4 scroll-mt-24">
+              <h2 class="text-xl font-bold text-[#252D49]">4. 已收录优惠码与适用规则</h2>
+              <div class="grid gap-4 sm:grid-cols-2">
+                {brand.coupons.map((c) => (
+                  <div class="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFF] p-4 text-sm">
+                    <div class="flex items-center justify-between gap-2">
+                      <div>
+                        <span class="text-xs font-semibold text-[#64748B]">{c.activityName}</span>
+                        <div class="mt-0.5 text-lg font-extrabold text-[#5B48C4]">
+                          <code>{c.code}</code>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        data-copy-code={c.code}
+                        class="min-h-[38px] rounded-xl bg-white px-3 text-xs font-bold text-[#5B48C4] ring-1 ring-[#D8CEFF] hover:bg-[#7664D9] hover:text-white"
+                      >
+                        复制优惠码
+                      </button>
+                    </div>
+                    <ul class="mt-3 space-y-1 text-xs leading-relaxed text-[#334155]">
+                      <li><strong>折扣显示：</strong>{c.discountLabel}</li>
+                      <li><strong>适用套餐：</strong>{c.applicablePlansText}</li>
+                      <li><strong>资格与叠加：</strong>{c.userEligibility}；{c.stackableNote}</li>
+                      <li><strong>证据说明：</strong>{c.evidenceNote}（核对日期：{c.lastCheckedDate}）</li>
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          <!-- 5. Client & Clash Compatibility -->
+          <section id="clients" class="space-y-4 scroll-mt-24">
+            <h2 class="text-xl font-bold text-[#252D49]">5. 客户端支持与 Clash 第三方订阅政策</h2>
+            {compat && (
+              <div class="rounded-2xl border border-[#E2E8F0] bg-[#EAF5FF]/60 p-4 text-sm text-[#252D49]">
+                <strong>兼容核查结论：</strong>{compat.compatibilityEvidence}
+                <div class="mt-1.5 text-xs text-[#334155]">
+                  适用范围：{compat.applicablePlans} | 已知限制：{compat.limitations}
+                </div>
+              </div>
+            )}
+            <div class="table-scroll-wrap rounded-2xl border border-[#E2E8F0]">
+              <table class="min-w-[540px] w-full text-left text-sm">
+                <thead class="bg-[#F0EBFF] text-[#252D49]">
+                  <tr>
+                    <th class="px-4 py-3">操作系统 / 客户端</th>
+                    <th class="px-4 py-3">支持状态</th>
+                    <th class="px-4 py-3">具体使用条件</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-[#E2E8F0] text-[#334155]">
+                  {brand.clients.map((cl) => (
+                    <tr>
+                      <td class="px-4 py-3 font-semibold text-[#252D49]">{cl.platform}</td>
+                      <td class="px-4 py-3">{cl.supportStatus}</td>
+                      <td class="px-4 py-3 text-xs sm:text-sm">{cl.condition}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- 6. Protocols, Lines, Regions -->
+          <section id="network" class="space-y-4 scroll-mt-24">
+            <h2 class="text-xl font-bold text-[#252D49]">6. 传输协议、网络线路标签与节点地区</h2>
+            <div class="grid gap-4 sm:grid-cols-3">
+              <div class="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFF] p-4">
+                <div class="text-xs font-bold text-[#7664D9]">协议标注</div>
+                <div class="mt-1.5 text-sm font-semibold text-[#252D49]">{brand.protocols.join('、')}</div>
+              </div>
+              <div class="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFF] p-4">
+                <div class="text-xs font-bold text-[#7664D9]">线路架构标签</div>
+                <div class="mt-1.5 text-sm font-semibold text-[#252D49]">{brand.lineTypes.join('、')}</div>
+              </div>
+              <div class="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFF] p-4">
+                <div class="text-xs font-bold text-[#7664D9]">支付方式记录</div>
+                <div class="mt-1.5 text-sm font-semibold text-[#252D49]">{brand.paymentMethods.join(' / ')}</div>
+              </div>
+            </div>
+            <div class="rounded-2xl border border-[#E2E8F0] bg-white p-4 text-sm text-[#334155]">
+              <strong>公开历史节点覆盖地区：</strong>{brand.nodeRegions.join('、')}
+              {brand.nodeCountNote && <span class="mt-1 block text-xs text-[#64748B]">{brand.nodeCountNote}</span>}
+            </div>
+          </section>
+
+          <!-- 7. AI & Streaming Publicity Notes -->
+          {(brand.aiSupport.length > 0 || brand.streamingSupport.length > 0) && (
+            <section id="ai-streaming" class="space-y-4 scroll-mt-24">
+              <h2 class="text-xl font-bold text-[#252D49]">7. AI 工具与流媒体服务公开说明</h2>
+              <p class="text-xs text-[#64748B]">
+                以下内容转述自品牌公开介绍与第三方档案记录，受节点出口地区、目标服务风控策略与本地网络变动影响，不作为持续解锁承诺。
+              </p>
+              <div class="grid gap-4 md:grid-cols-2">
+                {brand.aiSupport.length > 0 && (
+                  <div class="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFF] p-4">
+                    <h3 class="text-sm font-bold text-[#252D49]">AI 平台适配说明</h3>
+                    <ul class="mt-2 space-y-1.5 text-xs text-[#334155]">
+                      {brand.aiSupport.map((a) => (
+                        <li><strong>{a.platform}：</strong>{a.note}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {brand.streamingSupport.length > 0 && (
+                  <div class="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFF] p-4">
+                    <h3 class="text-sm font-bold text-[#252D49]">流媒体服务公开说明</h3>
+                    <ul class="mt-2 space-y-1.5 text-xs text-[#334155]">
+                      {brand.streamingSupport.map((s) => (
+                        <li><strong>{s.platform}：</strong>{s.note}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
+          <!-- 8. Pros, Limitations, Suitable / Not Suitable -->
+          <section id="suitability" class="space-y-4 scroll-mt-24">
+            <h2 class="text-xl font-bold text-[#252D49]">8. 特点优势、客观限制与适用人群</h2>
+            <div class="grid gap-4 md:grid-cols-2">
+              <div class="rounded-2xl border border-emerald-200 bg-emerald-50/40 p-4">
+                <h3 class="text-sm font-bold text-emerald-950">核心参考亮点</h3>
+                <ul class="mt-2 space-y-1.5 text-xs leading-relaxed text-[#334155]">
+                  {brand.pros.map((p) => <li>• {p}</li>)}
+                </ul>
+              </div>
+              <div class="rounded-2xl border border-amber-200 bg-amber-50/40 p-4">
+                <h3 class="text-sm font-bold text-amber-950">客观不足与使用限制</h3>
+                <ul class="mt-2 space-y-1.5 text-xs leading-relaxed text-[#334155]">
+                  {brand.limitations.map((l) => <li>• {l}</li>)}
+                </ul>
+              </div>
+              <div class="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFF] p-4">
+                <h3 class="text-sm font-bold text-[#252D49]">适合人群</h3>
+                <ul class="mt-2 space-y-1.5 text-xs leading-relaxed text-[#334155]">
+                  {brand.suitableFor.map((s) => <li>• {s}</li>)}
+                </ul>
+              </div>
+              <div class="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFF] p-4">
+                <h3 class="text-sm font-bold text-[#252D49]">谨慎选择人群</h3>
+                <ul class="mt-2 space-y-1.5 text-xs leading-relaxed text-[#334155]">
+                  {brand.notSuitableFor.map((n) => <li>• {n}</li>)}
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- 9. Refund & Support -->
+          <section id="after-sales" class="space-y-3 scroll-mt-24">
+            <h2 class="text-xl font-bold text-[#252D49]">9. 退款、升级与客户支持说明</h2>
+            <p class="text-sm leading-relaxed text-[#334155]"><strong>退款与换档政策：</strong>{brand.refundAndUpgradePolicy}</p>
+            <p class="text-sm leading-relaxed text-[#334155]"><strong>客服渠道说明：</strong>{brand.customerServiceNote}</p>
+          </section>
+
+          <!-- Brand Companion Articles -->
+          {brandArticles.length > 0 && (
+            <section class="space-y-3 border-t border-[#E2E8F0] pt-6">
+              <h2 class="text-lg font-bold text-[#252D49]">延伸专题文章</h2>
+              <div class="grid gap-3 sm:grid-cols-2">
+                {brandArticles.map((art) => (
+                  <a href={`/articles/${art.id}/`} class="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFF] p-4 transition hover:border-[#7664D9]">
+                    <span class="text-[11px] font-bold text-[#7664D9]">{art.data.category}</span>
+                    <div class="mt-1 text-sm font-bold text-[#252D49]">{art.data.title}</div>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+
+          <!-- 10. FAQs -->
+          {brand.faqs.length > 0 && (
+            <section id="faq" class="space-y-4 border-t border-[#E2E8F0] pt-6 scroll-mt-24">
+              <h2 class="text-xl font-bold text-[#252D49]">10. {brand.name} 常见问题解答（FAQ）</h2>
+              <FaqAccordion items={brand.faqs} />
+            </section>
+          )}
+
+          <!-- 11. Sources -->
+          <section id="sources" class="border-t border-[#E2E8F0] pt-6 text-xs text-[#64748B] scroll-mt-24">
+            <div class="mb-2 font-bold text-[#252D49]">11. 原始资料来源与更新时间</div>
+            <ul class="list-disc space-y-1 pl-5">
+              {brand.sources.map((src) => (
+                <li>
+                  {src.label}（{src.date}）：{src.note}
+                </li>
+              ))}
+            </ul>
+            <p class="mt-3">
+              披露声明：本站为独立资讯知识博客，并非 {brand.name} 官方网站；文内注册按钮含推广链接（rel="sponsored nofollow"）。详情请参阅
+              <a href="/affiliate-disclosure/" class="text-[#5B48C4] underline">推广披露说明</a>。
+            </p>
+          </section>
+        </article>
+
+        <!-- Right Sticky CTA & TOC -->
+        <aside class="space-y-6">
+          <div class="rounded-3xl border border-[#D8CEFF] bg-white p-5 shadow-sm lg:sticky lg:top-24">
+            <div class="text-xs font-bold text-[#7664D9] uppercase">品牌快速入口</div>
+            <h2 class="mt-1 text-xl font-extrabold text-[#252D49]">{brand.name}</h2>
+            <p class="mt-1 text-xs text-[#64748B]">{brand.tagline}</p>
+
+            {primaryCoupon && (
+              <div class="mt-4 rounded-xl bg-[#F0EBFF] p-3 text-xs">
+                <div class="text-[#5B48C4] font-bold">可用优惠码：{primaryCoupon.code}</div>
+                <div class="mt-0.5 text-[#334155]">{primaryCoupon.discountLabel} · {primaryCoupon.applicablePlansText}</div>
+              </div>
+            )}
+
+            <a
+              href={brand.affLink}
+              target="_blank"
+              rel="sponsored nofollow noopener noreferrer"
+              class="btn-magic-primary mt-4 w-full text-sm"
+            >
+              前往 {brand.name} 注册购买 ↗
+            </a>
+            <p class="mt-2 text-center text-[11px] text-[#64748B]">
+              建议首单选月付，以结算页实付显示为准
+            </p>
+
+            <nav aria-label="档案目录" class="mt-6 hidden border-t border-[#E2E8F0] pt-4 lg:block">
+              <div class="mb-2 text-xs font-bold text-[#252D49]">本页目录</div>
+              <ul class="space-y-1.5 text-xs">
+                {tocSections.map((s) => (
+                  <li>
+                    <a href={`#${s.id}`} class="block rounded-lg px-2 py-1 text-[#334155] hover:bg-[#F0EBFF] hover:text-[#5B48C4]">
+                      {s.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

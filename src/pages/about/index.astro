@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { SITE_CONFIG } from '../../data/site-config';
+---
+
+<BaseLayout
+  title="关于魔法梯子（Magic Ladder）与编辑团队说明｜mofatizi.blog"
+  description="了解魔法梯子（Magic Ladder）的建站宗旨、知识整理方向、独立品牌档案核验原则以及不冒充官方网站的编辑立场。"
+  canonicalPath="/about/"
+>
+  <section class="bg-magic-hero border-b border-[#E2E8F0] py-10 sm:py-12">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ label: '首页', href: '/' }, { label: '关于我们' }]} />
+      <h1 class="text-3xl font-extrabold text-[#252D49] sm:text-4xl">关于魔法梯子（Magic Ladder）</h1>
+      <p class="mt-3 text-base leading-relaxed text-[#334155]">
+        <strong>魔法梯子（https://mofatizi.blog）</strong> 是一个专注于网络工具知识普及、Clash/Mihomo/sing-box 开源客户端百科与 18 家机场品牌可追溯资料整理的独立中文知识博客。
+      </p>
+    </div>
+  </section>
+
+  <section class="py-10 sm:py-14">
+    <div class="mx-auto max-w-4xl space-y-6 px-4 sm:px-6 lg:px-8">
+      <div class="magic-card p-6 sm:p-8">
+        <h2 class="text-xl font-bold text-[#252D49]">一、我们的定位与作者团队</h2>
+        <p class="mt-3 text-sm leading-relaxed text-[#334155] sm:text-base">
+          本站由 <strong>{SITE_CONFIG.author.name}</strong> 维护运营，核心工作聚焦三件事：
+        </p>
+        <ul class="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-[#334155]">
+          <li>整理并核对开源与正版代理客户端的官方 GitHub 仓库、支持操作系统及安全校验要点；</li>
+          <li>用通俗且严谨的文字解释代理协议、订阅链接、TUN 模式、DNS 与策略组配置原理；</li>
+          <li>依真实提交与可追溯公开日期资料维护 18 家机场品牌档案，如实标注客户端开放条件、历史价格日期与售后限制。</li>
+        </ul>
+      </div>
+
+      <div class="magic-card p-6 sm:p-8">
+        <h2 class="text-xl font-bold text-[#252D49]">二、独立站点声明</h2>
+        <p class="mt-3 text-sm leading-relaxed text-[#334155] sm:text-base">
+          魔法梯子属于独立第三方网络知识资讯网站，<strong>不运营任何代理节点服务器，也不冒充任何机场品牌或开源软件项目的官方网站</strong>。所有价格表格均标明原始记录日期，不以宣传口号充当性能实测结论。相关内容审核与利益披露可查阅
+          <a href="/editorial-policy/" class="font-semibold text-[#5B48C4] underline">编辑原则</a> 与
+          <a href="/affiliate-disclosure/" class="font-semibold text-[#5B48C4] underline">推广披露</a>。
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

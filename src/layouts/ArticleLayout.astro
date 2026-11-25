@@ -1,0 +1,251 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs, { type BreadcrumbItem } from '../components/Breadcrumbs.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
+import { SITE_CONFIG } from '../data/site-config';
+
+export interface TocHeading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+export interface RelatedLink {
+  label: string;
+  href: string;
+  tag?: string;
+}
+
+export interface Props {
+  title: string;
+  h1: string;
+  description: string;
+  category: string;
+  publishDate: string;
+  updatedDate: string;
+  author?: string;
+  canonicalPath?: string;
+  breadcrumbs: BreadcrumbItem[];
+  headings?: TocHeading[];
+  faqs?: { question: string; answer: string }[];
+  sources?: string[];
+  relatedLinks?: RelatedLink[];
+  documentedVersion?: string;
+  coverImage?: string;
+  coverAlt?: string;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  title,
+  h1,
+  description,
+  category,
+  publishDate,
+  updatedDate,
+  author = SITE_CONFIG.author.name,
+  canonicalPath,
+  breadcrumbs,
+  headings = [],
+  faqs = [],
+  sources = [],
+  relatedLinks = [],
+  documentedVersion,
+  coverImage,
+  coverAlt,
+  jsonLd,
+} = Astro.props;
+
+const filteredHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+
+const knowledgeRail = [
+  { label: '新手入门路径', href: '/guides/getting-started/' },
+  { label: 'VPN 与机场区别', href: '/guides/vpn-vs-airport/' },
+  { label: 'Clash 魔法学院', href: '/clash/' },
+  { label: 'Clash 兼容机场', href: '/clash/airports/' },
+  { label: 'Clash 模式与 TUN', href: '/clash/tun/' },
+  { label: '十大客户端百科', href: '/clients/' },
+  { label: '订阅购买注意事项', href: '/guides/buy-subscription/' },
+  { label: '18 家机场品牌档案', href: '/brands/' },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath={canonicalPath}
+  ogType="article"
+  publishDate={publishDate}
+  updatedDate={updatedDate}
+  jsonLd={jsonLd}
+>
+  <div class="bg-magic-articles py-8 sm:py-10">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <Breadcrumbs items={breadcrumbs} />
+
+      <div class="grid gap-8 lg:grid-cols-[210px_minmax(0,1fr)_240px]">
+        <!-- Left Knowledge Sidebar (Desktop) -->
+        <aside class="hidden lg:block" aria-label="魔法知识栏目">
+          <div class="sticky top-24 rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-xs">
+            <div class="mb-3 text-xs font-bold tracking-wider text-[#7664D9] uppercase">魔法知识图书馆</div>
+            <ul class="space-y-1.5 text-sm">
+              {knowledgeRail.map((item) => (
+                <li>
+                  <a
+                    href={item.href}
+                    class="block rounded-lg px-2.5 py-1.5 font-medium text-[#334155] transition hover:bg-[#F0EBFF] hover:text-[#5B48C4]"
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </aside>
+
+        <!-- Center Reading Column -->
+        <article class="min-w-0 rounded-3xl border border-[#E2E8F0] bg-white p-5 shadow-xs sm:p-8 lg:p-10">
+          <header class="border-b border-[#E2E8F0] pb-6">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="rounded-full bg-[#F0EBFF] px-3 py-1 text-xs font-semibold text-[#5B48C4]">
+                {category}
+              </span>
+              {documentedVersion && (
+                <span class="rounded-full bg-[#EAF5FF] px-3 py-1 text-xs font-medium text-[#252D49]">
+                  {documentedVersion}
+                </span>
+              )}
+            </div>
+
+            <h1 class="mt-4 text-2xl font-bold leading-snug tracking-tight text-[#252D49] sm:text-3xl lg:text-4xl">
+              {h1}
+            </h1>
+
+            <p class="mt-3 text-base leading-relaxed text-[#64748B] sm:text-lg">
+              {description}
+            </p>
+
+            <div class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-[#64748B]">
+              <span>作者：<strong class="font-semibold text-[#252D49]">{author}</strong></span>
+              <span>发布日期：<time datetime={publishDate}>{publishDate}</time></span>
+              <span>最后更新：<time datetime={updatedDate}>{updatedDate}</time></span>
+            </div>
+
+            {coverImage && (
+              <div class="mt-6 overflow-hidden rounded-2xl border border-[#E2E8F0] bg-[#F8FAFF]">
+                <img
+                  src={coverImage}
+                  alt={coverAlt || h1}
+                  width="760"
+                  height="570"
+                  loading="lazy"
+                  class="h-48 w-full object-cover object-top sm:h-60"
+                />
+              </div>
+            )}
+          </header>
+
+          <!-- Mobile Collapsible TOC -->
+          {filteredHeadings.length > 0 && (
+            <details class="mt-6 rounded-2xl border border-[#E2E8F0] bg-[#F8FAFF] p-4 lg:hidden">
+              <summary class="cursor-pointer text-sm font-bold text-[#252D49]">
+                文章目录（点击展开 {filteredHeadings.length} 个章节）
+              </summary>
+              <nav aria-label="移动端文章目录" class="mt-3 space-y-1.5 text-sm">
+                {filteredHeadings.map((h) => (
+                  <a
+                    href={`#${h.slug}`}
+                    class:list={[
+                      'block rounded-lg py-1 text-[#334155] hover:text-[#5B48C4]',
+                      h.depth === 3 ? 'pl-4 text-xs text-[#64748B]' : 'font-medium',
+                    ]}
+                  >
+                    {h.text}
+                  </a>
+                ))}
+              </nav>
+            </details>
+          )}
+
+          <!-- Main Prose Content -->
+          <div class="prose-magic mt-7">
+            <slot />
+          </div>
+
+          <!-- Article FAQ -->
+          {faqs.length > 0 && (
+            <section class="mt-10 border-t border-[#E2E8F0] pt-8">
+              <h2 class="mb-4 text-xl font-bold text-[#252D49]">常见问题解答（FAQ）</h2>
+              <FaqAccordion items={faqs} />
+            </section>
+          )}
+
+          <!-- Sources & Editorial Correction -->
+          <footer class="mt-10 space-y-4 border-t border-[#E2E8F0] pt-6 text-xs text-[#64748B]">
+            {sources.length > 0 && (
+              <div>
+                <div class="mb-1.5 font-bold text-[#252D49]">参考资料与文档依据：</div>
+                <ul class="list-disc space-y-1 pl-5">
+                  {sources.map((src) => (
+                    <li>{src}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[#F8FAFF] p-4">
+              <span>
+                发现客户端版本变更、机场政策更新或文档表述误差？欢迎提交修正建议。
+              </span>
+              <a href="/contact/" class="font-semibold text-[#5B48C4] hover:underline">
+                联系与内容纠错 →
+              </a>
+            </div>
+          </footer>
+        </article>
+
+        <!-- Right Sticky TOC + Related Links -->
+        <aside class="space-y-6" aria-label="目录与延伸阅读">
+          {filteredHeadings.length > 0 && (
+            <div class="hidden rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-xs lg:sticky lg:top-24 lg:block">
+              <div class="mb-3 text-xs font-bold tracking-wider text-[#7664D9] uppercase">本页目录</div>
+              <nav aria-label="文章目录" class="max-h-[52vh] space-y-1.5 overflow-y-auto pr-1 text-sm">
+                {filteredHeadings.map((h) => (
+                  <a
+                    href={`#${h.slug}`}
+                    class:list={[
+                      'block rounded-lg px-2 py-1 leading-snug text-[#334155] transition hover:bg-[#F0EBFF] hover:text-[#5B48C4]',
+                      h.depth === 3 ? 'pl-5 text-xs text-[#64748B]' : 'font-medium',
+                    ]}
+                  >
+                    {h.text}
+                  </a>
+                ))}
+              </nav>
+            </div>
+          )}
+
+          {relatedLinks.length > 0 && (
+            <div class="rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-xs">
+              <div class="mb-3 text-xs font-bold tracking-wider text-[#7664D9] uppercase">相关延伸阅读</div>
+              <ul class="space-y-2 text-sm">
+                {relatedLinks.map((link) => (
+                  <li>
+                    <a
+                      href={link.href}
+                      class="block rounded-xl border border-[#E2E8F0] bg-[#F8FAFF] px-3 py-2 transition hover:border-[#7664D9] hover:bg-[#F0EBFF]/60"
+                    >
+                      {link.tag && (
+                        <span class="mb-0.5 block text-[11px] font-semibold text-[#7664D9]">{link.tag}</span>
+                      )}
+                      <span class="block font-semibold text-[#252D49]">{link.label}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </aside>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

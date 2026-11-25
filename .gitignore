@@ -1,0 +1,7 @@
+dist/
+.astro/
+node_modules/
+reports/
+.indexnow-manifest.json
+.DS_Store
+*.log

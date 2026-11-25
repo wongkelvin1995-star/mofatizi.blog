@@ -1,0 +1,319 @@
+[
+  {
+    "clientId": "clash-verge-rev",
+    "clientName": "Clash Verge Rev",
+    "aliases": ["Verge Rev", "CVR", "Clash Verge 续作"],
+    "tagline": "基于 Tauri 与 Mihomo 内核的轻量级桌面代理客户端",
+    "officialSource": "https://github.com/clash-verge-rev/clash-verge-rev",
+    "releasesUrl": "https://github.com/clash-verge-rev/clash-verge-rev/releases",
+    "coreEngine": "Mihomo (Clash.Meta)",
+    "techStack": "Tauri (Rust) + React",
+    "supportedPlatforms": ["Windows", "macOS", "Linux"],
+    "platformPackages": {
+      "Windows": "x64-setup.exe / arm64-setup.exe",
+      "macOS": "aarch64.dmg (Apple Silicon) / x64.dmg (Intel)",
+      "Linux": ".deb / .rpm / .AppImage (x64 & arm64)"
+    },
+    "supportedConfigTypes": ["Clash YAML", "Mihomo YAML", "Merge / JavaScript 覆写", "Rule-Providers"],
+    "categories": ["新手友好", "桌面端客户端"],
+    "beginnerFriendly": true,
+    "clientRole": "桌面端图形前端",
+    "documentedVersion": "持续维护的 Tauri 桌面版，支持内置与切换 Mihomo 稳定/Alpha 核心",
+    "sourceDate": "2026-11-25",
+    "highlights": [
+      "原生 Tauri 架构，内存占用相比传统 Electron 客户端更克制",
+      "支持系统代理、TUN 虚拟网卡模式与本地服务模式安装",
+      "内置 Merge 与 Script 配置覆写，不破坏上游订阅即可自定义规则",
+      "支持多订阅配置文件切换、自动定时更新与分组延迟探测"
+    ],
+    "cautions": [
+      "不提供官方 iOS 与 Android 安装包，移动端需搭配 Shadowrocket、FlClash 或 Hiddify 等",
+      "开启 TUN 模式在 Windows/macOS 下通常需要管理员权限或安装服务模式",
+      "请仅从 github.com/clash-verge-rev/clash-verge-rev 获取安装包，避免第三方修改包"
+    ]
+  },
+  {
+    "clientId": "clash-party",
+    "clientName": "Clash Party",
+    "aliases": ["Mihomo Party", "mihomo-party", "ClashParty"],
+    "tagline": "基于 Electron 与 Mihomo 内核的现代化桌面端管理客户端",
+    "officialSource": "https://github.com/mihomo-party-org/clash-party",
+    "releasesUrl": "https://github.com/mihomo-party-org/clash-party/releases",
+    "coreEngine": "Mihomo (Clash.Meta)",
+    "techStack": "Electron + Mihomo",
+    "supportedPlatforms": ["Windows", "macOS", "Linux"],
+    "platformPackages": {
+      "Windows": "x64 / arm64 安装包 (.exe) 与便携版",
+      "macOS": "Apple Silicon (aarch64) 与 Intel (x64) .dmg / .pkg",
+      "Linux": ".deb / .rpm / .AppImage / tar.gz (amd64 & arm64)"
+    },
+    "supportedConfigTypes": ["Clash YAML", "Mihomo YAML", "覆写规则与自定义 DNS", "Sub-Store 生态整合"],
+    "categories": ["新手友好", "桌面端客户端"],
+    "beginnerFriendly": true,
+    "clientRole": "桌面端图形前端",
+    "documentedVersion": "mihomo-party-org/clash-party 官方发行版本（原名 Mihomo Party）",
+    "sourceDate": "2026-11-25",
+    "highlights": [
+      "图形化程度高，将常用的 DNS、TUN 虚拟网卡与覆写脚本做成直观开关",
+      "内置 Mihomo 内核管理与日志实时监控，适合桌面端快速排查规则命中",
+      "支持快捷导入常见 Clash 订阅链接并自动读取剩余流量与到期头信息"
+    ],
+    "cautions": [
+      "基于 Electron 封装，包体积与常驻内存略高于 Tauri 类客户端",
+      "仅覆盖 Windows、macOS、Linux 三大桌面系统，不包含手机端或 OpenWrt"
+    ]
+  },
+  {
+    "clientId": "mihomo",
+    "clientName": "Mihomo",
+    "aliases": ["Clash.Meta", "MetaCubeX", "Clash Meta 内核"],
+    "tagline": "MetaCubeX 维护的规则代理核心引擎（原 Clash.Meta）",
+    "officialSource": "https://github.com/MetaCubeX/mihomo",
+    "releasesUrl": "https://github.com/MetaCubeX/mihomo/releases",
+    "coreEngine": "Mihomo Core",
+    "techStack": "Go",
+    "supportedPlatforms": ["Windows", "macOS", "Linux", "OpenWrt"],
+    "platformPackages": {
+      "Windows": "amd64 / arm64 / 386 二进制可执行文件",
+      "macOS": "darwin-arm64 / darwin-amd64 二进制",
+      "Linux": "linux-amd64 / arm64 / armv7 / riscv64 等二进制与 systemd 服务",
+      "OpenWrt": "由 OpenClash / Nikki 等插件调用的核心二进制"
+    },
+    "supportedConfigTypes": ["Mihomo / Clash.Meta YAML", "Rule-Providers", "Proxy-Providers", "Sniffer 域名嗅探"],
+    "categories": ["进阶配置工具", "桌面端客户端", "路由器相关工具"],
+    "beginnerFriendly": false,
+    "clientRole": "底层代理内核（CLI / Core）",
+    "documentedVersion": "MetaCubeX/mihomo 官方主线发行版",
+    "sourceDate": "2026-11-25",
+    "highlights": [
+      "当前 Clash Verge Rev、Clash Party、FlClash、OpenClash 等主流工具共同依赖的底层内核",
+      "支持 VLESS Reality、Hysteria2、TUIC、Trojan、Shadowsocks 等现代协议及混合规则集",
+      "具备 Fake-IP 与 Redir-Host 双 DNS 解析模式及强健的 TUN 栈支持"
+    ],
+    "cautions": [
+      "核心本体为命令行程序，不直接提供桌面窗口界面；普通用户应通过 GUI 前端或路由器插件使用",
+      "部分早期 Clash 原版配置字段在 Mihomo 中存在增强或替代写法，需核对内核语法"
+    ]
+  },
+  {
+    "clientId": "shadowrocket",
+    "clientName": "Shadowrocket",
+    "aliases": ["小火箭", "Shadowrocket iOS"],
+    "tagline": "Apple 生态下经典的规则代理工具（支持 iPhone / iPad / Apple Silicon Mac）",
+    "officialSource": "https://apps.apple.com/app/shadowrocket/id932747118",
+    "releasesUrl": "https://apps.apple.com/app/shadowrocket/id932747118",
+    "coreEngine": "Shadow Launch 自研网络扩展引擎",
+    "techStack": "iOS / iPadOS / macOS (M1+) / tvOS Network Extension",
+    "supportedPlatforms": ["iOS", "macOS"],
+    "platformPackages": {
+      "iOS": "App Store 非中国大陆区付费下载（Shadow Launch Technology Limited）",
+      "macOS": "支持搭载 Apple M1 及以上芯片且运行 macOS 11.0+ 的 Mac 设备"
+    },
+    "supportedConfigTypes": ["通用订阅链接 (Base64 / SIP008)", "单节点 URI / 二维码", "Conf 分流规则文件"],
+    "categories": ["新手友好", "移动端客户端"],
+    "beginnerFriendly": true,
+    "clientRole": "Apple 生态原生客户端",
+    "documentedVersion": "App Store 官方正式版（Shadow Launch Technology Limited 发行）",
+    "sourceDate": "2026-11-25",
+    "highlights": [
+      "原生对接 iOS/iPadOS VPN Network Extension，系统级流量接管稳定省电",
+      "支持从机场用户中心复制通用订阅链接、扫描节点二维码或粘贴单节点 URI 导入",
+      "自带连通性延迟测试、打开时自动更新订阅与按域名/IP 规则分流"
+    ],
+    "cautions": [
+      "App Store 需使用非中国大陆区 Apple ID 购买正版，切勿使用来源不明的共享账号长期登录 iCloud",
+      "不支持 Windows、Android 与 Linux；部分仅提供 Clash 专用格式的订阅需确认服务商是否提供通用/小火箭格式",
+      "若机场已暂停第三方通用订阅并要求使用 Nextin 或官方客户端，则无法通过小火箭直接接入"
+    ]
+  },
+  {
+    "clientId": "v2rayn",
+    "clientName": "v2rayN",
+    "aliases": ["v2rayn", "2dust v2rayN"],
+    "tagline": "支持多内核调度的经典跨平台桌面代理客户端（Win / macOS / Linux）",
+    "officialSource": "https://github.com/2dust/v2rayN",
+    "releasesUrl": "https://github.com/2dust/v2rayN/releases",
+    "coreEngine": "多内核支持（Xray-core / sing-box / Mihomo）",
+    "techStack": ".NET / Avalonia",
+    "supportedPlatforms": ["Windows", "macOS", "Linux"],
+    "platformPackages": {
+      "Windows": "x64 / x86 / arm64 压缩包或安装包",
+      "macOS": "arm64 / x64 桌面包",
+      "Linux": "x64 / arm64 / riscv64 / loong64 等包"
+    },
+    "supportedConfigTypes": ["Base64 通用订阅", "VLESS / VMess / Trojan / SS / Hysteria2 URI", "sing-box / Mihomo 自定义配置"],
+    "categories": ["桌面端客户端", "进阶配置工具"],
+    "beginnerFriendly": false,
+    "clientRole": "多内核桌面客户端",
+    "documentedVersion": "github.com/2dust/v2rayN 跨平台 Avalonia 架构版本",
+    "sourceDate": "2026-11-25",
+    "highlights": [
+      "由 2dust 长期维护，现代版本已从纯 Windows 扩展至 macOS 与 Linux",
+      "同时兼容 Xray 与 sing-box 等多种核心，并可导入通用订阅与单节点分享链接",
+      "支持系统代理、TUN 虚拟网卡模式以及精细化自定义路由规则集"
+    ],
+    "cautions": [
+      "界面偏工程向与多内核配置，新手初次设置时需理解「清除系统代理 / 自动配置系统代理 / TUN」区别",
+      "下载时需留意是否包含 Core 内核（WithCore 版本或手动搭配官方内核），切勿从非 GitHub 镜像下载来路不明包"
+    ]
+  },
+  {
+    "clientId": "v2rayng",
+    "clientName": "v2rayNG",
+    "aliases": ["v2rayng", "2dust v2rayNG"],
+    "tagline": "Android 平台经典的开源 Xray/V2Ray 订阅与节点客户端",
+    "officialSource": "https://github.com/2dust/v2rayNG",
+    "releasesUrl": "https://github.com/2dust/v2rayNG/releases",
+    "coreEngine": "Xray-core / V2Ray-core",
+    "techStack": "Android Native",
+    "supportedPlatforms": ["Android"],
+    "platformPackages": {
+      "Android": "arm64-v8a / armeabi-v7a / x86_64 / universal APK（GitHub Releases）"
+    },
+    "supportedConfigTypes": ["Base64 通用订阅", "VLESS / VMess / Trojan / SS / WireGuard URI", "预置分流规则"],
+    "categories": ["新手友好", "移动端客户端"],
+    "beginnerFriendly": true,
+    "clientRole": "Android 专用轻量客户端",
+    "documentedVersion": "github.com/2dust/v2rayNG 官方发布版本",
+    "sourceDate": "2026-11-25",
+    "highlights": [
+      "与 v2rayN 同源（2dust 维护），对 VLESS、VMess、Trojan 等通用订阅兼容性直接",
+      "支持分应用代理（指定特定 App 走代理或绕过代理）与按国家 IP 绕过",
+      "支持扫描二维码、从剪贴板导入节点及订阅分组定时更新"
+    ],
+    "cautions": [
+      "仅支持 Android 设备（含部分安卓平板），不支持 iOS 或桌面系统",
+      "部分品牌（如浪网）在 2026-11 档案中明确推荐 Android 使用 v2rayNG，但仍需以订阅格式是否匹配为准"
+    ]
+  },
+  {
+    "clientId": "sing-box",
+    "clientName": "sing-box",
+    "aliases": ["SagerNet sing-box", "SFA", "SFI", "SFM"],
+    "tagline": "SagerNet 开发的通用代理平台与下一代 JSON 规则引擎",
+    "officialSource": "https://github.com/SagerNet/sing-box",
+    "docsUrl": "https://sing-box.sagernet.org/",
+    "releasesUrl": "https://github.com/SagerNet/sing-box/releases",
+    "coreEngine": "sing-box Core",
+    "techStack": "Go + 官方原生客户端 (SFA/SFI/SFM)",
+    "supportedPlatforms": ["Windows", "macOS", "iOS", "Android", "Linux", "OpenWrt"],
+    "platformPackages": {
+      "Windows": "CLI 二进制与第三方 GUI（如 Hiddify / v2rayN）",
+      "macOS": "SFM (sing-box for macOS) 与 Homebrew 包",
+      "iOS": "SFI (sing-box for iOS) App Store 客户端",
+      "Android": "SFA (sing-box for Android) 官方客户端",
+      "Linux": "APT / DNF / AUR / Docker / 二进制",
+      "OpenWrt": "opkg / apk 生态与 HomeProxy 等 LuCI 插件"
+    },
+    "supportedConfigTypes": ["sing-box JSON 配置", "二进制 Rule-Set (.srs)", "TUN 栈与多协议入出站"],
+    "categories": ["进阶配置工具", "桌面端客户端", "移动端客户端", "路由器相关工具"],
+    "beginnerFriendly": false,
+    "clientRole": "通用代理核心与原生生态",
+    "documentedVersion": "SagerNet/sing-box 官方内核及官方全平台客户端文档",
+    "sourceDate": "2026-11-25",
+    "highlights": [
+      "统一抽象入站、出站、路由与 DNS，以结构化 JSON 和二进制 .srs 规则集实现高效率分流",
+      "同时拥有 Apple（SFI/SFM）与 Android（SFA）官方原生图形客户端，也可作为底层核心服务于 Hiddify 与 v2rayN",
+      "原生支持 TUN 透明代理、VLESS Reality、Hysteria2、TUIC、WireGuard 等丰富协议"
+    ],
+    "cautions": [
+      "直接手写 sing-box JSON 配置对新手门槛较高；大多数机场直接下发的是 Clash YAML 或通用订阅，需确认是否提供 sing-box 格式",
+      "不同主版本的 sing-box 配置字段（如 outbound/inbound/dns 写法）存在演进差异，使用示例配置时需对照官方文档版本"
+    ]
+  },
+  {
+    "clientId": "hiddify",
+    "clientName": "Hiddify",
+    "aliases": ["Hiddify Next", "hiddify-app"],
+    "tagline": "基于 sing-box 内核的开源跨平台全端代理客户端",
+    "officialSource": "https://github.com/hiddify/hiddify-app",
+    "releasesUrl": "https://github.com/hiddify/hiddify-app/releases",
+    "coreEngine": "hiddify-sing-box",
+    "techStack": "Flutter + sing-box",
+    "supportedPlatforms": ["Windows", "macOS", "iOS", "Android", "Linux"],
+    "platformPackages": {
+      "Windows": "x64 / arm64 安装包与便携版",
+      "macOS": "Universal / Apple Silicon / Intel .dmg",
+      "iOS": "App Store 官方上架版本",
+      "Android": "GitHub Releases APK 与 Google Play",
+      "Linux": "AppImage / .deb / .rpm"
+    },
+    "supportedConfigTypes": ["sing-box JSON", "通用订阅与 URI", "兼容部分 Clash 配置自动转换"],
+    "categories": ["新手友好", "桌面端客户端", "移动端客户端"],
+    "beginnerFriendly": true,
+    "clientRole": "全平台图形客户端",
+    "documentedVersion": "github.com/hiddify/hiddify-app 官方发行版本",
+    "sourceDate": "2026-11-25",
+    "highlights": [
+      "少数在 Windows、macOS、Linux、Android 与 iOS 五大平台均由同一开源项目提供统一界面的客户端",
+      "底层基于定制版 sing-box 内核，支持自动分流、多协议自适应与简洁的一键开关体验",
+      "无广告且开源可审计，对不愿分别学习不同平台界面差异的用户非常友好"
+    ],
+    "cautions": [
+      "虽然内置一定的 Clash 配置转换能力，但若机场订阅包含复杂的 Clash 专属脚本或非标准字段，仍可能与原生 Mihomo 客户端存在兼容差异",
+      "若机场服务商仅提供官方专属客户端、未开放第三方订阅链接，同样无法直接导入 Hiddify"
+    ]
+  },
+  {
+    "clientId": "flclash",
+    "clientName": "FlClash",
+    "aliases": ["FlClash 客户端", "Flutter Clash"],
+    "tagline": "基于 Flutter 与 Mihomo 内核的跨桌面及 Android 多端客户端",
+    "officialSource": "https://github.com/chen08209/FlClash",
+    "releasesUrl": "https://github.com/chen08209/FlClash/releases",
+    "coreEngine": "Mihomo (Clash.Meta)",
+    "techStack": "Flutter + Mihomo",
+    "supportedPlatforms": ["Windows", "macOS", "Android", "Linux"],
+    "platformPackages": {
+      "Windows": "x64 / arm64 安装包 (.exe) 与压缩包 (.zip)",
+      "macOS": "macOS 12+ .dmg 及 Homebrew Cask",
+      "Android": "arm64-v8a / armeabi-v7a / x86_64 APK（含 Android TV 与 F-Droid）",
+      "Linux": ".deb / .rpm / AppImage (x64 & arm64)"
+    },
+    "supportedConfigTypes": ["Clash YAML", "Mihomo YAML", "覆写配置与 WebDAV 同步"],
+    "categories": ["新手友好", "桌面端客户端", "移动端客户端"],
+    "beginnerFriendly": true,
+    "clientRole": "跨桌面与 Android 统一前端",
+    "documentedVersion": "github.com/chen08209/FlClash 官方发行版本",
+    "sourceDate": "2026-11-25",
+    "highlights": [
+      "使用 Flutter 构建自适应界面，使 Windows/macOS/Linux 桌面端与 Android 手机端操作体验高度统一",
+      "原生搭载 Mihomo 内核，支持规则模式、TUN 虚拟网卡、流量请求实时查看与 WebDAV 跨端同步",
+      "Android 端支持分应用代理、快捷开关磁贴及 Android TV 适配"
+    ],
+    "cautions": [
+      "官方发布页覆盖 Windows、macOS、Linux 与 Android，不包含 iOS 版本；iPhone/iPad 用户需选用 Shadowrocket 或 Hiddify 等",
+      "多端使用 WebDAV 同步配置时，需注意 WebDAV 账号凭证及订阅 URL 的存放安全"
+    ]
+  },
+  {
+    "clientId": "openclash",
+    "clientName": "OpenClash",
+    "aliases": ["OpenWrt OpenClash", "luci-app-openclash"],
+    "tagline": "运行于 OpenWrt 路由器环境的 Mihomo / Clash 透明代理插件",
+    "officialSource": "https://github.com/vernesong/OpenClash",
+    "releasesUrl": "https://github.com/vernesong/OpenClash/releases",
+    "coreEngine": "Mihomo (Clash.Meta) 内核",
+    "techStack": "OpenWrt LuCI + Shell / Ruby / Mihomo",
+    "supportedPlatforms": ["OpenWrt"],
+    "platformPackages": {
+      "OpenWrt": "luci-app-openclash (.ipk / .apk 适配 OpenWrt 路由器固件)"
+    },
+    "supportedConfigTypes": ["Clash / Mihomo YAML", "Fake-IP / Redir-Host / TUN 混合透明代理", "订阅定时更新与覆写"],
+    "categories": ["进阶配置工具", "路由器相关工具"],
+    "beginnerFriendly": false,
+    "clientRole": "路由器级透明代理插件",
+    "documentedVersion": "github.com/vernesong/OpenClash 官方仓库维护版本",
+    "sourceDate": "2026-11-25",
+    "highlights": [
+      "部署在软路由或 OpenWrt 路由器后，可使局域网内的电视、游戏主机与智能设备无需逐一安装客户端",
+      "深度集成 Mihomo 内核，提供 Fake-IP 与 Redir-Host 两种透明代理路径及完善的 DNS 劫持防泄漏选项",
+      "支持配置定时更新机场订阅、节点策略组面板控制及局域网设备分流"
+    ],
+    "cautions": [
+      "仅适用于 OpenWrt 路由器系统，需要具备基础的固件架构、防火墙转发与路由器性能（CPU/内存）认知",
+      "若机场未开放标准 Clash/Mihomo 订阅链接（如仅限官方客户端或账号登录认证），则无法在 OpenClash 中直接订阅接入",
+      "路由器透明代理开启后，同一账号下的局域网多设备并发需确认服务商的设备数量与家庭共享限制"
+    ]
+  }
+]

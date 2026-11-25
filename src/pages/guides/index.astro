@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+
+const guideCards = [
+  {
+    title: '魔法上网教程与科学上网入门指南',
+    desc: '零基础三阶段学习路径：基础概念、客户端选择与首次安全连接五步法。',
+    href: '/guides/getting-started/',
+    tag: '新手必读',
+  },
+  {
+    title: 'VPN 和机场有什么区别？哪个更划算？',
+    desc: '对比协议栈、分流灵活性、多设备计费方式及不同流量画像下的费用结构。',
+    href: '/guides/vpn-vs-airport/',
+    tag: '原理与费用对比',
+  },
+  {
+    title: '梯子订阅怎么买？七项核查清单',
+    desc: '下单前核对客户端政策、优惠码排他性、退款规则与防骗红线。',
+    href: '/guides/buy-subscription/',
+    tag: '购买避坑',
+  },
+  {
+    title: '梯子节点怎么切换？地区选择与策略组',
+    desc: '详解香港/台湾/日本/新加坡/美国节点特点、延迟检测局限与切换要点。',
+    href: '/guides/switch-nodes/',
+    tag: '日常实操',
+  },
+  {
+    title: 'Clash 订阅与节点导入完整教程',
+    desc: '了解 YAML 格式、Subscription-Userinfo 流量同步头与三种导入方式。',
+    href: '/clash/import/',
+    tag: 'Clash 教程',
+  },
+  {
+    title: 'Shadowrocket 小火箭订阅与节点添加',
+    desc: 'iPhone 与 iPad 上添加 URL 订阅、扫描二维码及自动更新订阅步骤。',
+    href: '/clients/shadowrocket/subscription/',
+    tag: 'iOS 实操',
+  },
+];
+---
+
+<BaseLayout
+  title="魔法上网教程与科学上网使用指南大全｜魔法梯子"
+  description="汇集魔法上网新手入门教程、VPN与机场区别对比、梯子订阅购买核查清单、节点切换实操以及 Clash 与小火箭使用教程。"
+  canonicalPath="/guides/"
+>
+  <section class="bg-magic-hero border-b border-[#E2E8F0] py-10 sm:py-12">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ label: '首页', href: '/' }, { label: '魔法教程与使用指南' }]} />
+      <h1 class="text-3xl font-extrabold text-[#252D49] sm:text-4xl">魔法教程与使用指南中心</h1>
+      <p class="mt-3 max-w-3xl text-base text-[#334155]">
+        所有教程均依据真实软件功能与品牌政策编撰，直接回答实际配置问题，不设置任何登录或前置阅读门槛。
+      </p>
+    </div>
+  </section>
+
+  <section class="py-10 sm:py-14">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {guideCards.map((g) => (
+          <a href={g.href} class="magic-card flex flex-col justify-between p-6">
+            <div>
+              <span class="rounded-full bg-[#F0EBFF] px-3 py-1 text-xs font-bold text-[#5B48C4]">{g.tag}</span>
+              <h2 class="mt-3 text-xl font-bold text-[#252D49]">{g.title}</h2>
+              <p class="mt-2 text-sm leading-relaxed text-[#64748B]">{g.desc}</p>
+            </div>
+            <span class="mt-5 text-sm font-bold text-[#5B48C4]">开始阅读指南 →</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

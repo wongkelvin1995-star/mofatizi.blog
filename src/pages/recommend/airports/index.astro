@@ -1,0 +1,171 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import BrandCard from '../../../components/BrandCard.astro';
+import FaqAccordion from '../../../components/FaqAccordion.astro';
+import { ALL_BRANDS, ALL_COMPATIBILITY } from '../../../data/registry';
+import { SITE_CONFIG } from '../../../data/site-config';
+
+const compatById = new Map(ALL_COMPATIBILITY.map((c) => [c.brandId, c]));
+
+const faqs = [
+  {
+    question: '为什么有些品牌在筛选「已确认 Clash 订阅」时不会出现？',
+    answer: '本站严格按照 2026-10 至 2026-11 核对的公开档案建库。诸如飞猫云、唯兔云、灵猫、无忧链接、Firefly、闪跃、光速云与 Sogo云等均主推官方专属客户端或暂停了通用订阅，不满足 Clash 兼容推荐条件，因此绝不列入 Clash 筛选结果。',
+  },
+  {
+    question: '品牌排序代表实际网络速度高低吗？',
+    answer: '不代表。1–18 的排列属于编辑基于资料完整度、价格透明度和常见使用需求的展示顺序，非延迟测速或稳定性排名。',
+  },
+  {
+    question: '不同机场的月付起步价和优惠码如何核实？',
+    answer: '每家品牌卡片及详情页均标注了记录日期与优惠码证据性质。仅在品牌公开或第三方确认固定折扣比例时计算参考折后价，其余以结账页面实际扣减为准。',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: '魔法机场推荐与科学上网机场品牌筛选目录',
+    url: `${SITE_CONFIG.domain}/recommend/airports/`,
+    description: '按客户端政策、支持系统与服务特征筛选 18 家真实资料机场品牌。',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="魔法机场推荐：2026科学上网机场品牌与客户端兼容性筛选｜魔法梯子"
+  description="汇总 18 家具有可追溯公开档案的机场品牌，支持按官方客户端、第三方 Clash 订阅、Windows/macOS/iOS/Android/Linux 支持及设备限制进行真实筛选。"
+  canonicalPath="/recommend/airports/"
+  jsonLd={jsonLd}
+>
+  <section class="bg-magic-hero border-b border-[#E2E8F0] py-10 sm:py-12">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ label: '首页', href: '/' }, { label: '梯子推荐', href: '/recommend/' }, { label: '魔法机场推荐' }]} />
+      <span class="inline-flex rounded-full bg-[#F0EBFF] px-3 py-1 text-xs font-bold text-[#5B48C4]">
+        18 家真实档案筛选中心
+      </span>
+      <h1 class="mt-3 text-3xl font-extrabold text-[#252D49] sm:text-4xl">
+        2026 魔法机场推荐与客户端兼容性筛选
+      </h1>
+      <p class="mt-3 max-w-3xl text-base leading-relaxed text-[#334155]">
+        选择科学上网机场前，首要判断标准不是宣传标语，而是<strong>你的设备操作系统与客户端习惯是否匹配该品牌的真实订阅政策</strong>。以下 18 家品牌均经 2026-10 至 2026-11 档案核对，下方筛选器仅依据有明确记录的属性过滤，无记录属性绝不虚标。
+      </p>
+
+      <!-- Real Attribute Filter Bar (Section 25) -->
+      <div class="mt-6 rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-xs">
+        <div class="mb-2.5 flex flex-wrap items-center justify-between gap-2">
+          <span class="text-xs font-bold text-[#252D49]">按已核对客户端与设备条件筛选：</span>
+          <span id="airport-filter-count" class="text-xs font-semibold text-[#5B48C4]">
+            当前展示全部 {ALL_BRANDS.length} 家品牌
+          </span>
+        </div>
+        <div class="flex flex-wrap gap-2" id="airport-filter-btns">
+          {[
+            { id: 'all', label: '全部品牌 (18)' },
+            { id: 'official', label: '提供官方客户端' },
+            { id: 'thirdParty', label: '有第三方支持记录' },
+            { id: 'clash', label: '已确认 Clash 订阅支持/申请' },
+            { id: 'Windows', label: 'Windows 支持' },
+            { id: 'macOS', label: 'macOS 支持' },
+            { id: 'iOS', label: 'iOS 支持' },
+            { id: 'Android', label: 'Android 支持' },
+            { id: 'Linux', label: 'Linux 官方支持' },
+            { id: 'deviceLimit', label: '有已知设备限制说明' },
+          ].map((f, idx) => (
+            <button
+              type="button"
+              data-brand-filter={f.id}
+              class:list={[
+                'min-h-[38px] rounded-xl px-3 text-xs font-semibold transition',
+                idx === 0
+                  ? 'bg-[#7664D9] text-white'
+                  : 'border border-[#E2E8F0] bg-[#F8FAFF] text-[#334155] hover:border-[#7664D9] hover:bg-[#F0EBFF]',
+              ]}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-magic-brands py-10 sm:py-14">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div id="airport-filter-grid" class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {ALL_BRANDS.map((brand) => {
+          const compat = compatById.get(brand.slug);
+          const platforms = compat ? Object.keys(compat.platforms).filter((k) => !compat.platforms[k].includes('未获')) : [];
+          return (
+            <div
+              class="brand-filter-item"
+              data-official={brand.hasOfficialClient ? '1' : '0'}
+              data-thirdparty={brand.confirmedThirdParty ? '1' : '0'}
+              data-clash={brand.confirmedClash ? '1' : '0'}
+              data-platforms={platforms.join(',')}
+              data-devicelimit={compat?.knownDeviceLimit ? '1' : '0'}
+            >
+              <BrandCard brand={brand} showFullReason={true} />
+            </div>
+          );
+        })}
+      </div>
+
+      <div class="mt-12 rounded-3xl border border-[#E2E8F0] bg-white p-6 shadow-xs sm:p-8">
+        <h2 class="text-xl font-bold text-[#252D49]">机场选型常见问题（FAQ）</h2>
+        <div class="mt-4">
+          <FaqAccordion items={faqs} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function () {
+      var wrap = document.getElementById('airport-filter-btns');
+      var items = Array.from(document.querySelectorAll('.brand-filter-item'));
+      var countEl = document.getElementById('airport-filter-count');
+      if (!wrap || !items.length) return;
+
+      wrap.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-brand-filter]');
+        if (!btn) return;
+        var mode = btn.getAttribute('data-brand-filter') || 'all';
+        wrap.querySelectorAll('[data-brand-filter]').forEach(function (el) {
+          var isAct = el === btn;
+          el.className = isAct
+            ? 'min-h-[38px] rounded-xl px-3 text-xs font-semibold transition bg-[#7664D9] text-white'
+            : 'min-h-[38px] rounded-xl px-3 text-xs font-semibold transition border border-[#E2E8F0] bg-[#F8FAFF] text-[#334155] hover:border-[#7664D9] hover:bg-[#F0EBFF]';
+        });
+
+        var shown = 0;
+        items.forEach(function (el) {
+          var match = false;
+          if (mode === 'all') match = true;
+          else if (mode === 'official') match = el.getAttribute('data-official') === '1';
+          else if (mode === 'thirdParty') match = el.getAttribute('data-thirdparty') === '1';
+          else if (mode === 'clash') match = el.getAttribute('data-clash') === '1';
+          else if (mode === 'deviceLimit') match = el.getAttribute('data-devicelimit') === '1';
+          else {
+            var p = (el.getAttribute('data-platforms') || '').split(',');
+            match = p.indexOf(mode) !== -1;
+          }
+          el.classList.toggle('hidden', !match);
+          if (match) shown++;
+        });
+        if (countEl) countEl.textContent = '当前筛选结果：' + shown + ' 家品牌';
+      });
+    })();
+  </script>
+</BaseLayout>

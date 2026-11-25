@@ -1,0 +1,155 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+
+const modules = [
+  {
+    code: 'LESSON 01',
+    title: 'Clash 兼容机场核查与选择',
+    desc: '认清哪些品牌真正开放通用订阅或支持高阶申请，避开「官方端独占型机场」误导。',
+    href: '/clash/airports/',
+    tag: 'Clash 机场推荐',
+  },
+  {
+    code: 'LESSON 02',
+    title: 'Clash 订阅格式与生命周期管理',
+    desc: '读懂 YAML 订阅响应头 Subscription-Userinfo、合理更新频率与 Token 防泄露规范。',
+    href: '/clash/subscription/',
+    tag: 'Clash 订阅教程',
+  },
+  {
+    code: 'LESSON 03',
+    title: '三种方式导入 Clash 节点配置',
+    desc: '手把手完成复制订阅 URL 远程导入、浏览器一键唤起及本地 YAML 文件拖拽导入。',
+    href: '/clash/import/',
+    tag: 'Clash 节点导入',
+  },
+  {
+    code: 'LESSON 04',
+    title: 'Clash 规则、全局与直连模式详解',
+    desc: '掌握 Rule、Global、Direct 出站模式的区别与策略组切线逻辑，解决开全局却断网问题。',
+    href: '/clash/modes/',
+    tag: '模式与策略组',
+  },
+  {
+    code: 'LESSON 05',
+    title: 'Clash TUN 虚拟网卡与服务模式设置',
+    desc: '理解网络层 L3 虚拟网卡接管与系统代理差异，正确配置 Windows/macOS 服务权限与 DNS。',
+    href: '/clash/tun/',
+    tag: 'TUN 模式教程',
+  },
+  {
+    code: 'LESSON 06',
+    title: 'Clash 订阅更新失败安全排查',
+    desc: '系统排除代理套娃死循环、网页网址混淆、客户端版本过旧及品牌策略收紧问题。',
+    href: '/clash/subscription-errors/',
+    tag: '常见错误排查',
+  },
+  {
+    code: 'LESSON 07',
+    title: 'Mihomo 内核知识与 YAML 语法入门',
+    desc: '深入了解 MetaCubeX/mihomo 底层引擎及 proxies / proxy-groups / rules 四段结构。',
+    href: '/clients/mihomo/',
+    tag: '底层核心与 YAML',
+  },
+  {
+    code: 'LESSON 08',
+    title: '主流 Clash 与代理客户端横评对比',
+    desc: '对比 Clash Verge Rev、Clash Party、FlClash、OpenClash、Hiddify 与 v2rayN 各自强项。',
+    href: '/clash/client-comparison/',
+    tag: 'Clash 客户端对比',
+  },
+];
+
+const mihomoClients = [
+  { name: 'Clash Verge Rev', href: '/clients/clash-verge-rev/', platforms: 'Win / macOS / Linux' },
+  { name: 'Clash Party', href: '/clients/clash-party/', platforms: 'Win / macOS / Linux' },
+  { name: 'FlClash', href: '/clients/flclash/', platforms: 'Win / macOS / Android / Linux' },
+  { name: 'OpenClash', href: '/clients/openclash/', platforms: 'OpenWrt 路由器' },
+  { name: 'Mihomo 内核', href: '/clients/mihomo/', platforms: '跨平台 Go 核心' },
+];
+---
+
+<BaseLayout
+  title="Clash知识中心｜Mihomo内核、订阅教程、TUN模式与兼容机场学院｜魔法梯子"
+  description="魔法梯子 Clash 魔法学院中心：涵盖 Clash 基础知识、兼容机场名录、订阅管理、节点导入、Rule/Global模式、TUN虚拟网卡及更新报错排查全套课程。"
+  canonicalPath="/clash/"
+>
+  <section class="bg-magic-hero border-b border-[#E2E8F0] py-10 sm:py-12">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ label: '首页', href: '/' }, { label: 'Clash 知识中心' }]} />
+      <div class="grid items-center gap-8 lg:grid-cols-[minmax(0,1.2fr)_340px]">
+        <div>
+          <span class="inline-flex rounded-full bg-[#F0EBFF] px-3 py-1 text-xs font-bold text-[#5B48C4]">
+            魔法学院 · Clash &amp; Mihomo 课程体系
+          </span>
+          <h1 class="mt-3 text-3xl font-extrabold text-[#252D49] sm:text-4xl">
+            Clash 知识中心：从零掌握现代 Mihomo 客户端与订阅管理
+          </h1>
+          <p class="mt-3 text-base leading-relaxed text-[#334155]">
+            原版 Clash 归档后，当前桌面、安卓与路由器生态已全面演进至 <strong>Mihomo（原 Clash.Meta）</strong> 内核体系。本学院汇总 8 大实战专题与官方开源客户端文档，全部课程免费开放直达，助你避开旧版本与订阅政策误区。
+          </p>
+          <div class="mt-5 flex flex-wrap gap-3">
+            <a href="/clash/airports/" class="btn-magic-primary">查看 Clash 兼容机场 →</a>
+            <a href="/clash/import/" class="btn-magic-secondary">学习节点导入教程</a>
+          </div>
+        </div>
+
+        <div class="rounded-3xl border border-white bg-white/85 p-3 shadow-md">
+          <img
+            src="/illustrations/clients-cyber-mage.webp"
+            alt="赛博魔法少女客户端与 Clash 学院插画"
+            width="760"
+            height="570"
+            class="h-auto w-full rounded-2xl object-cover"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Academy Course Grid -->
+  <section class="py-10 sm:py-14">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-bold text-[#252D49]">Clash 学院八大专题课程</h2>
+      <div class="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+        {modules.map((m) => (
+          <a href={m.href} class="magic-card flex flex-col justify-between p-5">
+            <div>
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-[11px] font-bold tracking-wider text-[#7664D9]">{m.code}</span>
+                <span class="rounded-full bg-[#EAF5FF] px-2.5 py-0.5 text-[11px] font-semibold text-[#252D49]">
+                  {m.tag}
+                </span>
+              </div>
+              <h3 class="mt-2.5 text-base font-bold text-[#252D49]">{m.title}</h3>
+              <p class="mt-2 text-xs leading-relaxed text-[#64748B]">{m.desc}</p>
+            </div>
+            <span class="mt-4 text-xs font-bold text-[#5B48C4]">进入本节课程 →</span>
+          </a>
+        ))}
+      </div>
+
+      <!-- Mihomo Ecosystem Bar -->
+      <div class="mt-12 rounded-3xl border border-[#E2E8F0] bg-white p-6 shadow-xs sm:p-8">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 class="text-xl font-bold text-[#252D49]">Mihomo 生态官方客户端直达百科</h2>
+            <p class="mt-1 text-sm text-[#64748B]">
+              建议配合以下仍在活跃维护的官方仓库使用标准 Clash/Mihomo 订阅，避免使用早已停止维护的旧客户端。
+            </p>
+          </div>
+          <a href="/clients/" class="text-sm font-bold text-[#5B48C4] hover:underline">查看全部 10 款客户端 →</a>
+        </div>
+        <div class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {mihomoClients.map((c) => (
+            <a href={c.href} class="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFF] p-4 transition hover:border-[#7664D9] hover:bg-[#F0EBFF]/60">
+              <div class="text-sm font-bold text-[#252D49]">{c.name}</div>
+              <div class="mt-1 text-xs text-[#64748B]">{c.platforms}</div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

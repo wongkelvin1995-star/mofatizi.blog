@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ClientSelector from '../../components/ClientSelector.astro';
+
+const ecosystems = [
+  {
+    name: 'Mihomo (Clash.Meta) 生态',
+    desc: '桌面与安卓主力规则分流架构，使用 YAML 订阅与策略组管理，代表工具包括 Clash Verge Rev、Clash Party、FlClash 与路由器端 OpenClash。',
+    href: '/clash/',
+    tag: '规则分流最流行',
+  },
+  {
+    name: 'sing-box 生态',
+    desc: '现代通用代理平台，采用统一 JSON 配置与二进制 .srs 规则集，代表工具包含 SagerNet 官方 SFI/SFM/SFA 与全平台一致界面的 Hiddify。',
+    href: '/clients/sing-box/',
+    tag: '全平台高性能内核',
+  },
+  {
+    name: 'Xray / V2Ray 经典生态',
+    desc: '侧重多内核调度与通用 Base64/URI 订阅，经典代表为 2dust 团队的桌面跨平台 v2rayN 与安卓端 v2rayNG。',
+    href: '/clients/v2rayn/',
+    tag: '通用订阅轻量之选',
+  },
+  {
+    name: 'Apple 原生与官方客户端生态',
+    desc: 'iPhone/iPad/Mac 端除了外区商店买断的 Shadowrocket，许多机场亦提供官方专属客户端或 iOS Nextin 识别码登录路径。',
+    href: '/clients/shadowrocket/',
+    tag: 'Apple / 官方一体化',
+  },
+];
+---
+
+<BaseLayout
+  title="魔法上网工具有哪些？2026代理客户端、官方端与生态全景指南｜魔法梯子"
+  description="盘点 2026 年主流魔法上网工具类型：Mihomo/Clash 系、sing-box/Hiddify 系、Xray/v2ray 系、Shadowrocket 与品牌官方客户端，并内置客户端选择助手。"
+  canonicalPath="/tools/"
+>
+  <section class="bg-magic-hero border-b border-[#E2E8F0] py-10 sm:py-12">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ label: '首页', href: '/' }, { label: '魔法上网工具有哪些' }]} />
+      <span class="inline-flex rounded-full bg-[#F0EBFF] px-3 py-1 text-xs font-bold text-[#5B48C4]">
+        KW 097 工具全景与选型助手
+      </span>
+      <h1 class="mt-3 text-3xl font-extrabold text-[#252D49] sm:text-4xl">
+        魔法上网工具有哪些？2026 主流工具分类图谱
+      </h1>
+      <p class="mt-3 max-w-3xl text-base leading-relaxed text-[#334155]">
+        选择魔法上网工具时，核心是看清<strong>底层内核生态</strong>与<strong>你的设备系统及服务商订阅政策是否匹配</strong>。下方先为你拆解四大主流工具生态，紧接着可以通过交互式客户端选择助手按系统筛选具体软件。
+      </p>
+    </div>
+  </section>
+
+  <section class="py-10 sm:py-14">
+    <div class="mx-auto max-w-7xl space-y-10 px-4 sm:px-6 lg:px-8">
+      <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+        {ecosystems.map((eco) => (
+          <a href={eco.href} class="magic-card flex flex-col justify-between p-5">
+            <div>
+              <span class="rounded-full bg-[#EAF5FF] px-2.5 py-0.5 text-[11px] font-bold text-[#252D49]">{eco.tag}</span>
+              <h2 class="mt-2.5 text-lg font-bold text-[#252D49]">{eco.name}</h2>
+              <p class="mt-2 text-sm leading-relaxed text-[#334155]">{eco.desc}</p>
+            </div>
+            <span class="mt-4 text-xs font-bold text-[#5B48C4]">深入查看详情 →</span>
+          </a>
+        ))}
+      </div>
+
+      <ClientSelector />
+    </div>
+  </section>
+</BaseLayout>

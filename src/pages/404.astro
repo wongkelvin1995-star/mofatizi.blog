@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="页面未找到 (404)｜魔法梯子 Magic Ladder"
+  description="抱歉，您访问的魔法传送门路径不存在或已迁移。请返回首页、使用全站中文搜索或进入核心知识栏目。"
+  canonicalPath="/404/"
+  noindex={true}
+>
+  <section class="bg-magic-hero py-14 sm:py-20">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-sm overflow-hidden rounded-3xl border border-white bg-white/85 p-3 shadow-lg">
+        <img
+          src="/illustrations/404-lost-mage.webp"
+          alt="魔法少女在空魔法传送门前寻找路径的 404 插画"
+          width="720"
+          height="540"
+          class="h-auto w-full rounded-2xl object-cover"
+        />
+      </div>
+
+      <span class="mt-6 inline-flex rounded-full bg-[#F0EBFF] px-3.5 py-1 text-xs font-bold text-[#5B48C4]">
+        HTTP 404 · 传送门坐标未找到
+      </span>
+      <h1 class="mt-3 text-3xl font-extrabold text-[#252D49] sm:text-4xl">
+        这条魔法路径似乎迷路了
+      </h1>
+      <p class="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-[#64748B] sm:text-base">
+        您访问的 URL 不存在、已被移除或拼写有误。您可以通过下方核心入口继续浏览，或使用全站搜索查找所需内容。
+      </p>
+
+      <div class="mt-7 flex flex-wrap justify-center gap-3">
+        <a href="/" class="btn-magic-primary">返回魔法梯子首页</a>
+        <a href="/search/" class="btn-magic-secondary">全站中文搜索</a>
+        <a href="/clash/" class="btn-magic-secondary">进入 Clash 知识中心</a>
+        <a href="/clients/" class="btn-magic-secondary">客户端大全</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

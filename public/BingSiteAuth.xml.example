@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<!-- 请在 Bing Webmaster Tools 为 https://mofatizi.blog 生成专属验证码后，将本文件另存为 public/BingSiteAuth.xml 并替换 YOUR_BING_VERIFICATION_CODE -->
+<users>
+	<user>YOUR_BING_VERIFICATION_CODE</user>
+</users>

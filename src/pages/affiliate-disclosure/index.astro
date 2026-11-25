@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+---
+
+<BaseLayout
+  title="推广链接与佣金披露说明（Affiliate Disclosure）｜魔法梯子"
+  description="说明魔法梯子站内部分机场注册链接包含推广参数（rel=sponsored nofollow），用于支持站点内容维护与文档整理，不影响客观事实记录。"
+  canonicalPath="/affiliate-disclosure/"
+>
+  <section class="bg-magic-hero border-b border-[#E2E8F0] py-10 sm:py-12">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ label: '首页', href: '/' }, { label: '推广披露说明' }]} />
+      <h1 class="text-3xl font-extrabold text-[#252D49] sm:text-4xl">推广链接与商业披露声明</h1>
+      <p class="mt-3 text-base text-[#334155]">透明披露商业合作关系，保障读者知情权。</p>
+    </div>
+  </section>
+
+  <section class="py-10 sm:py-14">
+    <div class="mx-auto max-w-4xl space-y-6 px-4 sm:px-6 lg:px-8">
+      <div class="magic-card p-6 sm:p-8 space-y-4 text-sm leading-relaxed text-[#334155]">
+        <h2 class="text-xl font-bold text-[#252D49]">一、推广链接与佣金机制说明</h2>
+        <p>
+          魔法梯子（https://mofatizi.blog）站内指向部分机场服务商注册购买页面的按钮或链接包含推广参数（AFF Link）。当访客通过此类链接注册并完成购买时，本站可能会从对应服务商处获得一定比例的推广佣金，这有助于我们持续维护全站技术百科文档、客户端版本追踪与服务器托管成本。
+        </p>
+        <p>
+          所有推广外链均按照搜索引擎规范添加了 <code class="rounded bg-[#F0EBFF] px-1.5 py-0.5 text-[#5B48C4]">rel="sponsored nofollow noopener noreferrer"</code> 属性，且这**不会增加您的任何购买成本**。
+        </p>
+
+        <h2 class="text-xl font-bold text-[#252D49]">二、独立编辑立场承诺</h2>
+        <p>
+          商业推广合作不改变本站对事实信息的客观记录标准：我们在品牌详情页中同样完整列明其暂停 Clash 订阅、无免费试用、无条件退款限制或规格历史差异等客观不足，并将开源客户端官网链接与服务商推广链接严格隔离。
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

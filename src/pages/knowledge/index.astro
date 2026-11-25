@@ -1,0 +1,131 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FaqAccordion from '../../components/FaqAccordion.astro';
+
+const allKnowledge = await getCollection('knowledge', ({ data }) => !data.draft);
+const stage1 = allKnowledge.filter((k) => k.data.stage === 'stage1');
+const stage2 = allKnowledge.filter((k) => k.data.stage === 'stage2');
+const stage3 = allKnowledge.filter((k) => k.data.stage === 'stage3');
+
+const knowledgeFaqs = [
+  {
+    question: '阅读这些知识专题需要注册账号或按顺序打卡解锁吗？',
+    answer: '完全不需要。魔法知识图书馆的全部三阶段文章均对所有访客与搜索引擎完全公开，你可以按需跳转到任意章节阅读。',
+  },
+  {
+    question: '系统代理、TUN 模式和全局模式到底该如何组合？',
+    answer: '建议记住两句话：模式决定「分流规则」（平时固定用 Rule 规则模式，仅测试用 Global）；系统代理和 TUN 决定「抓取哪些软件流量」（浏览器用系统代理够用，命令行/不读系统代理的软件才开 TUN）。',
+  },
+  {
+    question: '为什么在文章里看到 YAML 示例写着 example-node.invalid？',
+    answer: '这是符合规范的纯理论教学配置结构示意，绝不将虚构服务器或假冒品牌参数包装成真实服务节点。',
+  },
+];
+---
+
+<BaseLayout
+  title="魔法知识图书馆：网络工具百科、三阶段学习路径与常见问题｜魔法梯子"
+  description="系统化的科学上网与代理工具知识百科：按基础概念、设备客户端选型、配置与排错三阶段组织阅读路径，全部知识文章开放免费阅读。"
+  canonicalPath="/knowledge/"
+>
+  <section class="bg-magic-knowledge border-b border-[#E2E8F0] py-10 sm:py-12">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ label: '首页', href: '/' }, { label: '魔法知识图书馆' }]} />
+      <div class="grid items-center gap-8 lg:grid-cols-[minmax(0,1.2fr)_340px]">
+        <div>
+          <span class="inline-flex rounded-full bg-[#F5C9E5]/70 px-3 py-1 text-xs font-bold text-[#252D49]">
+            魔法学院知识库 · 三阶段开放阅读
+          </span>
+          <h1 class="mt-3 text-3xl font-extrabold text-[#252D49] sm:text-4xl">
+            魔法知识图书馆与网络工具百科
+          </h1>
+          <p class="mt-3 text-base leading-relaxed text-[#334155]">
+            汇集网络代理原理、主流加密协议、各平台客户端选择、DNS/TUN 机制及订阅安全防护知识。所有文章均直接给出核心答案与排查思路，无需注册或前置打卡即可自由阅读。
+          </p>
+        </div>
+
+        <div class="rounded-3xl border border-white bg-white/90 p-3 shadow-md">
+          <img
+            src="/illustrations/academy-library-mage.webp"
+            alt="魔法知识图书馆二次元少女阅读魔法典籍插画"
+            width="760"
+            height="570"
+            class="h-auto w-full rounded-2xl object-cover"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-10 sm:py-14">
+    <div class="mx-auto max-w-7xl space-y-12 px-4 sm:px-6 lg:px-8">
+      <!-- Stage 1 -->
+      <div>
+        <div class="mb-5">
+          <span class="rounded-full bg-[#F0EBFF] px-3 py-1 text-xs font-bold text-[#5B48C4]">第一阶段 · 基础知识</span>
+          <h2 class="mt-2 text-2xl font-bold text-[#252D49]">代理基础概念、协议与订阅原理</h2>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {stage1.map((item) => (
+            <a href={`/knowledge/${item.id}/`} class="magic-card flex flex-col justify-between p-5">
+              <div>
+                <span class="text-xs font-bold text-[#7664D9]">{item.data.category}</span>
+                <h3 class="mt-1.5 text-base font-bold text-[#252D49]">{item.data.title}</h3>
+                <p class="mt-2 line-clamp-2 text-xs leading-relaxed text-[#64748B]">{item.data.description}</p>
+              </div>
+              <span class="mt-4 text-xs font-bold text-[#5B48C4]">阅读章节 →</span>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Stage 2 -->
+      <div>
+        <div class="mb-5">
+          <span class="rounded-full bg-[#EAF5FF] px-3 py-1 text-xs font-bold text-[#252D49]">第二阶段 · 设备与客户端</span>
+          <h2 class="mt-2 text-2xl font-bold text-[#252D49]">全平台客户端选型、校验与多设备规范</h2>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {stage2.map((item) => (
+            <a href={`/knowledge/${item.id}/`} class="magic-card flex flex-col justify-between p-5">
+              <div>
+                <span class="text-xs font-bold text-[#7664D9]">{item.data.category}</span>
+                <h3 class="mt-1.5 text-base font-bold text-[#252D49]">{item.data.title}</h3>
+                <p class="mt-2 line-clamp-2 text-xs leading-relaxed text-[#64748B]">{item.data.description}</p>
+              </div>
+              <span class="mt-4 text-xs font-bold text-[#5B48C4]">阅读章节 →</span>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Stage 3 -->
+      <div>
+        <div class="mb-5">
+          <span class="rounded-full bg-[#F5C9E5]/60 px-3 py-1 text-xs font-bold text-[#252D49]">第三阶段 · 配置与问题排查</span>
+          <h2 class="mt-2 text-2xl font-bold text-[#252D49]">DNS、YAML、常见报错及购买风险防范</h2>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {stage3.map((item) => (
+            <a href={`/knowledge/${item.id}/`} class="magic-card flex flex-col justify-between p-5">
+              <div>
+                <span class="text-xs font-bold text-[#7664D9]">{item.data.category}</span>
+                <h3 class="mt-1.5 text-base font-bold text-[#252D49]">{item.data.title}</h3>
+                <p class="mt-2 line-clamp-2 text-xs leading-relaxed text-[#64748B]">{item.data.description}</p>
+              </div>
+              <span class="mt-4 text-xs font-bold text-[#5B48C4]">阅读章节 →</span>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- FAQ anchor -->
+      <div id="faq" class="rounded-3xl border border-[#E2E8F0] bg-white p-6 shadow-xs sm:p-8 scroll-mt-24">
+        <h2 class="mb-4 text-xl font-bold text-[#252D49]">知识百科常见高频疑问</h2>
+        <FaqAccordion items={knowledgeFaqs} />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

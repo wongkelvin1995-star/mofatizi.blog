@@ -1,0 +1,121 @@
+---
+import type { BrandData } from '../types/airport';
+import { getBrandMinAnnualLite, getBrandMinMonthly } from '../data/registry';
+import { formatYuan, getPrimaryCalculableCoupon } from '../utils/pricing';
+
+export interface Props {
+  brand: BrandData;
+  showFullReason?: boolean;
+}
+
+const { brand, showFullReason = false } = Astro.props;
+const minMonthly = getBrandMinMonthly(brand);
+const minAnnualLite = getBrandMinAnnualLite(brand);
+const primaryCoupon = getPrimaryCalculableCoupon(brand.coupons);
+const displayCoupon = primaryCoupon ?? brand.coupons[0] ?? null;
+
+const clashBadgeStyle: Record<string, string> = {
+  verified_tutorial: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+  conditional_apply: 'bg-[#F0EBFF] text-[#4C1D95] border-[#D8CEFF]',
+  official_only: 'bg-[#EAF5FF] text-[#1E3A8A] border-[#BFDBFE]',
+  paused_third_party: 'bg-amber-50 text-amber-900 border-amber-200',
+  unconfirmed: 'bg-slate-100 text-slate-700 border-slate-200',
+};
+---
+
+<article class="magic-card flex h-full flex-col justify-between p-5">
+  <div>
+    <!-- Top badges -->
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <span class="inline-flex items-center rounded-full bg-[#F0EBFF] px-2.5 py-0.5 text-xs font-bold text-[#5B48C4]">
+        #{brand.rank} · {brand.badge}
+      </span>
+      <span class:list={['inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-semibold', clashBadgeStyle[brand.clashSupportStatus] || clashBadgeStyle.unconfirmed]}>
+        {brand.clashBadge}
+      </span>
+    </div>
+
+    <!-- Brand Name -->
+    <div class="mt-3">
+      <h3 class="text-lg font-bold text-[#252D49]">
+        <a href={`/brands/${brand.slug}/`} class="hover:text-[#5B48C4] hover:underline">
+          {brand.name}
+          {brand.englishName && (
+            <span class="ml-1.5 text-sm font-medium text-[#64748B]">({brand.englishName})</span>
+          )}
+        </a>
+      </h3>
+      <p class="mt-1 text-xs font-medium text-[#7664D9]">{brand.positioning}</p>
+    </div>
+
+    <p class="mt-2.5 line-clamp-3 text-sm leading-relaxed text-[#334155]">
+      {showFullReason ? brand.selectionReason : brand.summary}
+    </p>
+
+    <!-- Key Verified Facts -->
+    <div class="mt-3.5 grid grid-cols-2 gap-2 rounded-xl border border-[#E2E8F0] bg-[#F8FAFF] p-3 text-xs">
+      {minMonthly !== null && (
+        <div>
+          <span class="block text-[#64748B]">常规月付参考</span>
+          <span class="font-bold text-[#252D49]">{formatYuan(minMonthly)}/月起</span>
+        </div>
+      )}
+      {minAnnualLite !== null && (
+        <div>
+          <span class="block text-[#64748B]">轻量年付参考</span>
+          <span class="font-bold text-[#252D49]">{formatYuan(minAnnualLite)}/年</span>
+        </div>
+      )}
+      <div>
+        <span class="block text-[#64748B]">协议标注</span>
+        <span class="font-semibold text-[#252D49]">{brand.protocols.slice(0, 2).join(' / ')}</span>
+      </div>
+      <div>
+        <span class="block text-[#64748B]">资料更新</span>
+        <span class="font-semibold text-[#252D49]">{brand.priceRecordDate}</span>
+      </div>
+    </div>
+
+    <!-- Client Policy Note -->
+    <p class="mt-3 text-xs leading-relaxed text-[#64748B]">
+      <strong class="font-semibold text-[#252D49]">客户端说明：</strong>
+      {brand.thirdPartySubscriptionPolicy}
+    </p>
+  </div>
+
+  <!-- Bottom Actions -->
+  <div class="mt-4 space-y-2.5 border-t border-[#E2E8F0] pt-3.5">
+    {displayCoupon && (
+      <div class="flex items-center justify-between gap-2 rounded-xl border border-[#E2E8F0] bg-[#F0EBFF]/50 px-3 py-2 text-xs">
+        <span class="truncate text-[#252D49]">
+          优惠码：<code class="font-bold text-[#5B48C4]">{displayCoupon.code}</code>
+          <span class="ml-1 text-[#64748B]">({displayCoupon.calculable ? displayCoupon.discountLabel : '结算页校验'})</span>
+        </span>
+        <button
+          type="button"
+          data-copy-code={displayCoupon.code}
+          class="shrink-0 rounded-lg bg-white px-2.5 py-1 font-semibold text-[#5B48C4] shadow-2xs ring-1 ring-[#D8CEFF] transition hover:bg-[#7664D9] hover:text-white"
+        >
+          复制
+        </button>
+      </div>
+    )}
+
+    <div class="grid grid-cols-2 gap-2">
+      <a
+        href={`/brands/${brand.slug}/`}
+        class="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-[#E2E8F0] bg-white px-3 text-xs font-bold text-[#252D49] transition hover:border-[#7664D9] hover:bg-[#F0EBFF]/60"
+      >
+        阅读品牌档案
+      </a>
+      <a
+        href={brand.affLink}
+        target="_blank"
+        rel="sponsored nofollow noopener noreferrer"
+        class="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[#7664D9] px-3 text-xs font-bold text-white shadow-xs transition hover:bg-[#5B48C4]"
+      >
+        前往官网注册 ↗
+      </a>
+    </div>
+  </div>
+</article>

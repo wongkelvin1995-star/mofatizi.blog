@@ -1,0 +1,59 @@
+---
+import { getEntry, render } from 'astro:content';
+import ArticleLayout from '../../../../layouts/ArticleLayout.astro';
+import { SITE_CONFIG } from '../../../../data/site-config';
+
+const entry = await getEntry('clients', 'shadowrocket-subscription');
+if (!entry) throw new Error('Missing shadowrocket-subscription');
+const { Content, headings } = await render(entry);
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: entry.data.title,
+    description: entry.data.description,
+    datePublished: entry.data.publishDate,
+    dateModified: entry.data.updatedDate,
+    author: { '@type': 'Organization', name: SITE_CONFIG.siteName },
+    mainEntityOfPage: `${SITE_CONFIG.domain}/clients/shadowrocket/subscription/`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: entry.data.faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  },
+];
+---
+
+<ArticleLayout
+  title={entry.data.title}
+  h1={entry.data.title}
+  description={entry.data.description}
+  category={entry.data.category}
+  publishDate={entry.data.publishDate}
+  updatedDate={entry.data.updatedDate}
+  documentedVersion={entry.data.documentedVersion}
+  canonicalPath="/clients/shadowrocket/subscription/"
+  breadcrumbs={[
+    { label: '首页', href: '/' },
+    { label: '客户端大全', href: '/clients/' },
+    { label: 'Shadowrocket', href: '/clients/shadowrocket/' },
+    { label: '订阅导入与添加节点' },
+  ]}
+  headings={headings}
+  faqs={entry.data.faqs}
+  sources={entry.data.sources}
+  relatedLinks={[
+    { label: 'Shadowrocket 综合百科', href: '/clients/shadowrocket/', tag: '软件定位' },
+    { label: 'iOS 客户端与 Nextin 指南', href: '/knowledge/ios-clients-guide/', tag: 'iOS 生态' },
+    { label: 'U1S1 有一说一客户端攻略', href: '/articles/u1s1-clash-and-vless-guide/', tag: '兼容机场' },
+  ]}
+  jsonLd={jsonLd}
+>
+  <Content />
+</ArticleLayout>

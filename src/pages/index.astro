@@ -1,0 +1,664 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BrandCard from '../components/BrandCard.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
+import { ALL_BRANDS, ALL_CLIENTS, HOME_FEATURED_BRANDS } from '../data/registry';
+import { PLATFORM_DEFINITIONS, SITE_CONFIG } from '../data/site-config';
+import { formatYuan, getPrimaryCalculableCoupon } from '../utils/pricing';
+
+const articles = (await getCollection('articles', ({ data }) => !data.draft)).slice(0, 6);
+const knowledgeEntries = (await getCollection('knowledge', ({ data }) => !data.draft)).slice(0, 8);
+
+const quickEntries = [
+  { label: '梯子推荐', desc: '选型逻辑与品牌指引', href: '/recommend/' },
+  { label: '机场品牌', desc: '18 家真实档案全览', href: '/brands/' },
+  { label: 'Clash专区', desc: '学院课程与兼容核对', href: '/clash/' },
+  { label: '客户端大全', desc: '十大工具与选择助手', href: '/clients/' },
+  { label: '新手入门', desc: '零基础三阶段教程', href: '/guides/getting-started/' },
+  { label: 'VPN知识', desc: 'VPN与机场区别对比', href: '/vpn/' },
+  { label: '订阅教程', desc: 'YAML导入与安全管理', href: '/clash/subscription/' },
+  { label: '常见问题', desc: '订阅报错与节点切换', href: '/knowledge/#faq' },
+];
+
+const clashTopics = [
+  { title: 'Clash 机场推荐', desc: '严格依据资料筛选真正支持第三方订阅的品牌', href: '/clash/airports/' },
+  { title: 'Clash 订阅教程', desc: 'YAML 格式、Traffic 同步头与 Token 防泄露', href: '/clash/subscription/' },
+  { title: 'Clash 节点导入', desc: '一键唤起、手动 URL 与本地文件三步导入', href: '/clash/import/' },
+  { title: 'Clash 模式设置', desc: 'Rule 规则、Global 全局与 Direct 直连区别', href: '/clash/modes/' },
+  { title: 'Clash TUN 模式', desc: '虚拟网卡与系统代理差异及服务模式权限', href: '/clash/tun/' },
+  { title: '订阅更新失败排查', desc: '代理环路、TLS 时间偏差与政策变更定位', href: '/clash/subscription-errors/' },
+  { title: 'Clash 客户端对比', desc: 'Verge Rev / Party / FlClash / Hiddify 横评', href: '/clash/client-comparison/' },
+];
+
+const brandsWithCalculableCoupons = ALL_BRANDS.filter((b) => Boolean(getPrimaryCalculableCoupon(b.coupons)));
+
+const homeFaqs = [
+  {
+    question: '「梯子」「机场」和「VPN」之间是什么关系？',
+    answer: '「梯子」是对科学上网与加密网络代理工具的通俗统称；其中「机场」主要指采用 Shadowsocks、VLESS、Trojan 等现代轻量代理协议、按流量或周期提供多地区节点的网络服务商；而传统 VPN 多通过 WireGuard/OpenVPN 建立系统层全流量隧道。在日常中文使用场景下，机场通常具备更精细的分流能力与更灵活的入门月付门槛。',
+  },
+  {
+    question: '下载 Clash Verge Rev、Shadowrocket 或 v2rayN 后就能直接联网吗？',
+    answer: '不能。这些开源或原生软件只是运行在本地设备上的客户端工具，本身不包含任何服务器节点或流量额度；必须配合合法获取的服务商账号（官方客户端路径）或订阅链接（第三方客户端路径）才能建立加密连接。',
+  },
+  {
+    question: '本站展示的 18 家机场品牌顺序是测速排名吗？',
+    answer: '不是。本站全部品牌展示顺序属于依据资料完整度、套餐公开透明度及常见需求整理的编辑精选顺序，不构成任何延迟测速榜单、晚高峰性能排名或客观稳定性排行榜。',
+  },
+  {
+    question: '是不是所有机场都默认提供 Clash 或 Shadowrocket 订阅链接？',
+    answer: '不是！根据 2026-10 至 2026-11 的品牌资料档案，多家品牌（如飞猫云、唯兔云、灵猫、无忧链接、Firefly、闪跃新订单、光速云、Sogo云等）主推官方专属客户端或 iOS Nextin 方案，已暂停或未默认开放第三方通用订阅；另如灵动云则规定需高阶或达标订单向客服申请。下单前请务必先在对应品牌档案或 Clash 机场专区核对。',
+  },
+  {
+    question: '新手第一次购买梯子或机场订阅，最稳妥的选择策略是什么？',
+    answer: '建议先确认自己的电脑和手机要用什么客户端，再选择支持月付的小额入门套餐（参考公开月付 ¥14.9–¥25 起步档）在实际网络环境体验几天；不要在首次注册时直接购买长达一两年或三年的不可退费长周期套餐。',
+  },
+  {
+    question: '苹果 iPhone 手机上常见的 Nextin 和 Shadowrocket（小火箭）有什么区别？',
+    answer: 'Shadowrocket 是外区 App Store 一次性买断付费的通用第三方规则客户端，需要机场提供可导出的通用订阅或 URI 节点；而 Nextin 则是部分机场（如灵动云 LDY、灵猫 lmwl、闪跃 sywl、浪网等）官方指引的统一接入客户端，输入品牌识别码和机场账号即可登录，无需付费购买小火箭。',
+  },
+  {
+    question: '订阅链接可以发给朋友或者放到网上免费转换工具里吗？',
+    answer: '强烈不建议！订阅链接通常自带个人专属 Token，等同于免密通行证。一旦外泄，他人会直接消耗你的套餐流量，或因多地并发触发风控导致账号封禁。如怀疑泄露，应立即到用户中心点击「重置订阅链接」。',
+  },
+  {
+    question: '为什么开了 Clash 全局模式（Global）反而突然上不了网？',
+    answer: '常见原因是只把顶部模式切换到了 Global，却没有展开下方出现的 `GLOBAL` 策略组选中一个真实节点（系统默认可能停留在 `DIRECT` 或失效项）。平时浏览请保持在「Rule 规则模式」下工作。',
+  },
+  {
+    question: '如何安全获取开源客户端安装包而不中木马？',
+    answer: '务必严格核对 GitHub 官方项目作者/组织路径（如 `clash-verge-rev/clash-verge-rev`、`mihomo-party-org/clash-party`、`2dust/v2rayN`、`chen08209/FlClash`、`hiddify/hiddify-app`）或 Apple App Store 官方开发者，切勿下载搜索引擎广告位或网盘转发的所谓「中文破解集成版」。',
+  },
+];
+
+const homeJsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE_CONFIG.siteName,
+    alternateName: SITE_CONFIG.englishName,
+    url: SITE_CONFIG.domain,
+    inLanguage: 'zh-CN',
+    description: SITE_CONFIG.homeSeo.description,
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: `${SITE_CONFIG.domain}/search/?q={search_term_string}`,
+      'query-input': 'required name=search_term_string',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: SITE_CONFIG.siteName,
+    url: SITE_CONFIG.domain,
+    logo: `${SITE_CONFIG.domain}/logo.svg`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: homeFaqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: f.answer,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title={SITE_CONFIG.homeSeo.title}
+  description={SITE_CONFIG.homeSeo.description}
+  canonicalPath="/"
+  preloadHero={true}
+  jsonLd={homeJsonLd}
+>
+  <!-- 1. 魔法 Hero 首屏 -->
+  <section class="bg-magic-hero relative overflow-hidden border-b border-[#E2E8F0]">
+    <!-- Subtle rotating arcane magic circle (desktop) -->
+    <div aria-hidden="true" class="pointer-events-none absolute -right-28 -top-24 hidden h-[520px] w-[520px] opacity-35 lg:block">
+      <svg viewBox="0 0 400 400" fill="none" class="animate-magic-spin h-full w-full">
+        <circle cx="200" cy="200" r="178" stroke="#7664D9" stroke-width="1.2" stroke-dasharray="10 8" />
+        <circle cx="200" cy="200" r="146" stroke="#87C5FF" stroke-width="1.5" stroke-dasharray="4 6" />
+        <polygon points="200,32 345,284 55,284" stroke="#7664D9" stroke-width="1" stroke-opacity="0.55" />
+        <polygon points="200,368 55,116 345,116" stroke="#87C5FF" stroke-width="1" stroke-opacity="0.65" />
+      </svg>
+    </div>
+
+    <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
+      <div class="grid items-center gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+        <!-- Left Copy + Search + CTAs -->
+        <div class="relative z-10">
+          <div class="inline-flex items-center gap-2 rounded-full border border-[#D8CEFF] bg-white/90 px-3.5 py-1.5 text-xs font-bold text-[#5B48C4] shadow-2xs">
+            <img src="/logo.svg" alt="" width="18" height="18" class="h-4 w-4 rounded" />
+            <span>Magic Ladder · 极境魔法知识商业旗舰</span>
+          </div>
+
+          <h1 class="mt-4 text-3xl font-extrabold tracking-tight text-[#252D49] sm:text-4xl lg:text-[42px] lg:leading-[1.2]">
+            {SITE_CONFIG.homeSeo.h1}
+          </h1>
+
+          <p class="mt-4 max-w-2xl text-base leading-relaxed text-[#334155] sm:text-lg">
+            {SITE_CONFIG.homeSeo.subtitle}
+          </p>
+
+          <!-- Full-Site Chinese Search Box -->
+          <form action="/search/" method="get" class="mt-6 max-w-xl">
+            <label for="hero-search-input" class="sr-only">全站中文搜索梯子品牌、客户端或教程</label>
+            <div class="flex flex-col gap-2 rounded-2xl border border-[#CBD5E1] bg-white p-2 shadow-sm sm:flex-row sm:items-center">
+              <div class="flex flex-1 items-center gap-2.5 px-2">
+                <svg class="h-5 w-5 shrink-0 text-[#7664D9]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
+                </svg>
+                <input
+                  id="hero-search-input"
+                  name="q"
+                  type="search"
+                  placeholder="搜品牌、客户端或问题（如：灵动云、Clash、小火箭、Mihomo）"
+                  class="h-11 w-full bg-transparent text-sm text-[#252D49] placeholder:text-[#64748B] focus:outline-none sm:text-base"
+                />
+              </div>
+              <button type="submit" class="btn-magic-primary shrink-0 px-5 text-sm">
+                全站搜索
+              </button>
+            </div>
+          </form>
+
+          <!-- Primary CTAs -->
+          <div class="mt-5 flex flex-wrap gap-3">
+            <a href="/recommend/airports/" class="btn-magic-primary">
+              浏览梯子推荐目录
+            </a>
+            <a href="/clients/" class="btn-magic-secondary">
+              进入客户端知识库
+            </a>
+            <a href="/guides/getting-started/" class="btn-magic-secondary">
+              新手入门教程 →
+            </a>
+          </div>
+
+          <p class="mt-4 text-xs text-[#64748B]">
+            已收录 {ALL_BRANDS.length} 家品牌真实档案 · {ALL_CLIENTS.length} 款开源官方客户端百科 · 资料同步截至 2026-11-25
+          </p>
+        </div>
+
+        <!-- Right Original Magical Girl Key Visual -->
+        <div class="relative mx-auto w-full max-w-md lg:max-w-none">
+          <div class="hero-parallax-target relative overflow-hidden rounded-3xl border border-white/80 bg-white/60 p-2 shadow-xl backdrop-blur-xs">
+            <picture>
+              <source media="(max-width: 767px)" srcset="/illustrations/hero-magical-girl-mobile.webp" />
+              <img
+                src="/illustrations/hero-magical-girl.webp"
+                alt="魔法梯子原创二次元魔法少女角色主视觉：银紫长发魔法学院少女手持发光魔法书与水晶权杖"
+                width="960"
+                height="720"
+                fetchpriority="high"
+                class="h-auto w-full rounded-2xl object-cover"
+              />
+            </picture>
+            <!-- Floating subtle sparkles -->
+            <span aria-hidden="true" class="animate-sparkle absolute left-5 top-5 inline-flex items-center gap-1 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-[#5B48C4] shadow-xs">
+              ✦ 魔法网络知识库
+            </span>
+            <span aria-hidden="true" class="animate-sparkle absolute bottom-5 left-5 rounded-full bg-[#252D49]/85 px-3 py-1 text-xs font-medium text-white backdrop-blur-xs" style="animation-delay: 1.5s">
+              官方客户端 × Clash/Mihomo 双路线核对
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. 魔法快捷入口 -->
+  <section class="border-b border-[#E2E8F0] bg-white py-8">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+        {quickEntries.map((entry) => (
+          <a
+            href={entry.href}
+            class="group flex min-h-[84px] flex-col justify-between rounded-2xl border border-[#E2E8F0] bg-[#F8FAFF] p-3.5 transition hover:-translate-y-0.5 hover:border-[#7664D9] hover:bg-[#F0EBFF]/60"
+          >
+            <span class="text-sm font-bold text-[#252D49] group-hover:text-[#5B48C4]">{entry.label}</span>
+            <span class="mt-1 text-xs leading-snug text-[#64748B]">{entry.desc}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 精选机场品牌 -->
+  <section class="bg-magic-brands border-b border-[#E2E8F0] py-12 sm:py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <span class="inline-flex rounded-full bg-[#F0EBFF] px-3 py-1 text-xs font-bold text-[#5B48C4]">
+            18 家品牌真实档案库
+          </span>
+          <h2 class="mt-2 text-2xl font-bold text-[#252D49] sm:text-3xl">
+            精选机场品牌推荐与客户端政策一览
+          </h2>
+          <p class="mt-1.5 max-w-3xl text-sm leading-relaxed text-[#64748B]">
+            以下按编辑精选展示顺序排列（非性能测速排名）。每张卡片均标明了官方客户端路径或第三方 Clash 订阅实际状态，无资料支撑的字段不作虚构展示。
+          </p>
+        </div>
+        <a href="/brands/" class="btn-magic-secondary shrink-0 text-sm">
+          查看全部 18 家品牌筛选 →
+        </a>
+      </div>
+
+      <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {HOME_FEATURED_BRANDS.map((brand) => (
+          <BrandCard brand={brand} showFullReason={true} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. 魔法梯子选择指南 -->
+  <section class="border-b border-[#E2E8F0] bg-white py-12 sm:py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <span class="inline-flex rounded-full bg-[#EAF5FF] px-3 py-1 text-xs font-bold text-[#252D49]">
+          理性决策框架
+        </span>
+        <h2 class="mt-2 text-2xl font-bold text-[#252D49] sm:text-3xl">
+          魔法梯子怎么选？从客户端、设备与套餐四个维度避坑
+        </h2>
+        <p class="mt-2 text-sm leading-relaxed text-[#64748B] sm:text-base">
+          选择适合自己的梯子工具不能只看单一价格或宣传术语。按照以下四步框架梳理需求，能避免买错后无法在自己常用设备上使用的窘境。
+        </p>
+      </div>
+
+      <div class="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+        <div class="magic-card p-5">
+          <div class="text-xs font-bold text-[#7664D9]">维度 01 · 客户端权限</div>
+          <h3 class="mt-1.5 text-lg font-bold text-[#252D49]">先确认官方端还是第三方订阅</h3>
+          <p class="mt-2 text-sm leading-relaxed text-[#334155]">
+            部分机场（如飞猫云、无忧、Firefly 新订单）主推官方客户端；仅开放订阅或支持客服申请的品牌（如 U1S1、灵动云高阶档）才可导入 Clash Verge Rev 或小火箭。
+          </p>
+          <a href="/clash/airports/" class="mt-3 inline-block text-xs font-bold text-[#5B48C4] hover:underline">
+            核对 Clash 兼容品牌 →
+          </a>
+        </div>
+
+        <div class="magic-card p-5">
+          <div class="text-xs font-bold text-[#7664D9]">维度 02 · 操作系统</div>
+          <h3 class="mt-1.5 text-lg font-bold text-[#252D49]">核对全设备覆盖与芯片架构</h3>
+          <p class="mt-2 text-sm leading-relaxed text-[#334155]">
+            Windows/macOS 需区分 x64 与 Apple Silicon；iOS 需区分付费 Shadowrocket 与品牌 Nextin 识别码；Linux 与 OpenWrt 用户必须优先挑选开放标准订阅的方案。
+          </p>
+          <a href="/tools/" class="mt-3 inline-block text-xs font-bold text-[#5B48C4] hover:underline">
+            浏览全部网络工具 →
+          </a>
+        </div>
+
+        <div class="magic-card p-5">
+          <div class="text-xs font-bold text-[#7664D9]">维度 03 · 预算与周期</div>
+          <h3 class="mt-1.5 text-lg font-bold text-[#252D49]">月付试错优于首单锁年付</h3>
+          <p class="mt-2 text-sm leading-relaxed text-[#334155]">
+            首次选购尽量从 100GB–150GB 入门月付起试水，验证本地运营商宽带与常用时段可用性后再考虑季付、年付或购买不限时流量包作为备线。
+          </p>
+          <a href="/recommend/budget/" class="mt-3 inline-block text-xs font-bold text-[#5B48C4] hover:underline">
+            查看低预算选择逻辑 →
+          </a>
+        </div>
+
+        <div class="magic-card p-5">
+          <div class="text-xs font-bold text-[#7664D9]">维度 04 · 条款与稳定性</div>
+          <h3 class="mt-1.5 text-lg font-bold text-[#252D49]">阅读退款规则与线路说明</h3>
+          <p class="mt-2 text-sm leading-relaxed text-[#334155]">
+            绝大多数机场不提供免费试用或无条件退款。注意区分普通中转、BGP 与 IEPL/IPLC 标签，同时提前看清设备并发与校园网支持限制。
+          </p>
+          <a href="/recommend/reliable/" class="mt-3 inline-block text-xs font-bold text-[#5B48C4] hover:underline">
+            了解稳定梯子选择标准 →
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 魔法客户端中心 -->
+  <section class="bg-magic-clients border-b border-[#E2E8F0] py-12 sm:py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="grid items-center gap-8 lg:grid-cols-[360px_minmax(0,1fr)]">
+        <div class="overflow-hidden rounded-3xl border border-white bg-white/80 p-3 shadow-md">
+          <img
+            src="/illustrations/clients-cyber-mage.webp"
+            alt="赛博魔法少女操控全息网络客户端面板插画"
+            width="760"
+            height="570"
+            loading="lazy"
+            class="h-auto w-full rounded-2xl object-cover"
+          />
+          <div class="p-3">
+            <h2 class="text-xl font-bold text-[#252D49]">魔法客户端百科中心</h2>
+            <p class="mt-1.5 text-sm leading-relaxed text-[#334155]">
+              收录 10 款经官方 GitHub 仓库与 App Store 核验的主流开源及原生客户端，提供安装架构区分、配置原理与安全下载入口。
+            </p>
+            <a href="/clients/#client-assistant" class="btn-magic-primary mt-4 w-full text-sm">
+              打开客户端选择助手
+            </a>
+          </div>
+        </div>
+
+        <div class="grid gap-3.5 sm:grid-cols-2">
+          {ALL_CLIENTS.map((client) => (
+            <a
+              href={`/clients/${client.clientId}/`}
+              class="magic-card flex flex-col justify-between p-4"
+            >
+              <div>
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-base font-bold text-[#252D49]">{client.clientName}</span>
+                  <span class="rounded-full bg-[#F0EBFF] px-2.5 py-0.5 text-[11px] font-semibold text-[#5B48C4]">
+                    {client.clientRole}
+                  </span>
+                </div>
+                <p class="mt-1.5 text-xs leading-relaxed text-[#334155]">{client.tagline}</p>
+              </div>
+              <div class="mt-3 flex flex-wrap gap-1.5 text-[11px] font-medium text-[#64748B]">
+                {client.supportedPlatforms.map((p) => (
+                  <span class="rounded-md bg-[#EAF5FF] px-2 py-0.5 text-[#252D49]">{p}</span>
+                ))}
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Clash 知识专区 -->
+  <section class="border-b border-[#E2E8F0] bg-white py-12 sm:py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <span class="inline-flex rounded-full bg-[#F0EBFF] px-3 py-1 text-xs font-bold text-[#5B48C4]">
+            Clash / Mihomo 专题学院
+          </span>
+          <h2 class="mt-2 text-2xl font-bold text-[#252D49] sm:text-3xl">
+            Clash 知识专区：订阅、导入、模式与排错
+          </h2>
+          <p class="mt-1.5 max-w-3xl text-sm text-[#64748B]">
+            系统整理基于 Mihomo 内核的 Clash 生态知识，覆盖机场兼容性核对、订阅头安全、规则模式、TUN 虚拟网卡及更新报错排查。
+          </p>
+        </div>
+        <a href="/clash/" class="btn-magic-secondary shrink-0 text-sm">
+          进入 Clash 学院总览 →
+        </a>
+      </div>
+
+      <div class="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {clashTopics.map((topic) => (
+          <a href={topic.href} class="magic-card flex flex-col justify-between p-5">
+            <div>
+              <h3 class="text-base font-bold text-[#252D49]">{topic.title}</h3>
+              <p class="mt-2 text-sm leading-relaxed text-[#64748B]">{topic.desc}</p>
+            </div>
+            <span class="mt-4 text-xs font-bold text-[#5B48C4]">阅读专题详情 →</span>
+          </a>
+        ))}
+        <a href="/clients/shadowrocket/subscription/" class="magic-card flex flex-col justify-between border-[#D8CEFF] bg-[#F8FAFF] p-5">
+          <div>
+            <h3 class="text-base font-bold text-[#252D49]">Shadowrocket 订阅导入</h3>
+            <p class="mt-2 text-sm leading-relaxed text-[#64748B]">小火箭添加 URL 订阅、二维码扫描与打开时自动更新指南</p>
+          </div>
+          <span class="mt-4 text-xs font-bold text-[#5B48C4]">查看小火箭导入教程 →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. 设备分类 & 8. VPN与机场知识 -->
+  <section class="border-b border-[#E2E8F0] bg-[#F8FAFF] py-12 sm:py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="grid gap-10 lg:grid-cols-2">
+        <!-- 7. 设备分类 -->
+        <div>
+          <h2 class="text-2xl font-bold text-[#252D49]">按操作系统查找客户端与配置指引</h2>
+          <p class="mt-2 text-sm text-[#64748B]">
+            不同设备对应的官方包后缀、商店获取方式与系统权限机制各有区别，点击对应系统进入专属指南。
+          </p>
+          <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {PLATFORM_DEFINITIONS.map((os) => {
+              const targetHref =
+                os.id === 'OpenWrt'
+                  ? '/knowledge/router-proxy-basics/'
+                  : `/knowledge/${os.id.toLowerCase()}-clients-guide/`;
+              return (
+                <a href={targetHref} class="magic-card p-4">
+                  <div class="text-xl" aria-hidden="true">{os.icon}</div>
+                  <div class="mt-2 text-sm font-bold text-[#252D49]">{os.label}</div>
+                  <div class="mt-0.5 text-xs text-[#64748B]">{os.desc}</div>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+
+        <!-- 8. VPN 与机场知识 -->
+        <div class="rounded-3xl border border-[#E2E8F0] bg-white p-6 shadow-xs sm:p-7">
+          <span class="inline-flex rounded-full bg-[#EAF5FF] px-3 py-1 text-xs font-bold text-[#252D49]">
+            原理与费用比较
+          </span>
+          <h2 class="mt-2.5 text-2xl font-bold text-[#252D49]">VPN 与机场有什么区别？怎么选更合适？</h2>
+          <p class="mt-2.5 text-sm leading-relaxed text-[#334155]">
+            传统 VPN（WireGuard / OpenVPN / IKEv2）在系统网络层建立全设备虚拟隧道，通常按时间周期与固定在线设备数计费；而机场依托 Shadowsocks、VLESS、Trojan 等轻量代理协议，擅长精细规则分流，通常按月度流量梯度收费，入门门槛与多设备灵活性往往更高。
+          </p>
+          <div class="mt-5 grid gap-3 sm:grid-cols-2">
+            <a href="/guides/vpn-vs-airport/" class="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFF] p-4 transition hover:border-[#7664D9]">
+              <div class="text-sm font-bold text-[#252D49]">VPN 和机场区别与划算度对比</div>
+              <div class="mt-1 text-xs text-[#64748B]">协议差异、分流精细度与不同用量账单对比</div>
+            </a>
+            <a href="/vpn/" class="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFF] p-4 transition hover:border-[#7664D9]">
+              <div class="text-sm font-bold text-[#252D49]">VPN 与加速器选择指南</div>
+              <div class="mt-1 text-xs text-[#64748B]">VPN 协议科普、加速器边界与隐私核查标准</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. 机场套餐与购买信息（仅展示真实核实资料） -->
+  <section class="border-b border-[#E2E8F0] bg-white py-12 sm:py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <span class="inline-flex rounded-full bg-[#F5C9E5]/60 px-3 py-1 text-xs font-bold text-[#252D49]">
+            已核对优惠与套餐参考
+          </span>
+          <h2 class="mt-2 text-2xl font-bold text-[#252D49] sm:text-3xl">
+            已确认折扣规则的品牌与购买注意事项
+          </h2>
+          <p class="mt-1.5 max-w-3xl text-sm text-[#64748B]">
+            以下仅展示在公开资料或品牌页面明确载明固定折扣比例的优惠码及排除条件；其余未确认固定比例的代码不在首页直接预计算折后价，购买时请以结算页实付金额为准。
+          </p>
+        </div>
+        <a href="/guides/buy-subscription/" class="btn-magic-secondary shrink-0 text-sm">
+          阅读购买七项核查清单 →
+        </a>
+      </div>
+
+      <div class="mt-7 grid gap-4 md:grid-cols-3">
+        {brandsWithCalculableCoupons.map((b) => {
+          const c = getPrimaryCalculableCoupon(b.coupons)!;
+          const regularMonthly = b.plans.find((p) => p.cycle === 'monthly' && p.category === 'regular');
+          return (
+            <div class="magic-card flex flex-col justify-between p-5">
+              <div>
+                <div class="flex items-center justify-between">
+                  <a href={`/brands/${b.slug}/`} class="text-lg font-bold text-[#252D49] hover:text-[#5B48C4]">
+                    {b.name}
+                  </a>
+                  <span class="rounded-full bg-[#F0EBFF] px-2.5 py-0.5 text-xs font-bold text-[#5B48C4]">
+                    {c.discountLabel}
+                  </span>
+                </div>
+                <p class="mt-2 text-xs text-[#64748B]">记录日期：{b.priceRecordDate} · {c.evidenceNote}</p>
+                <div class="mt-3 rounded-xl bg-[#F8FAFF] p-3 text-xs text-[#334155]">
+                  <div>优惠码：<code class="font-bold text-[#5B48C4]">{c.code}</code></div>
+                  <div class="mt-1">适用范围：{c.applicablePlansText}</div>
+                  {regularMonthly && (
+                    <div class="mt-1 font-semibold text-[#252D49]">
+                      示例月付：{regularMonthly.planName} 原价 {formatYuan(regularMonthly.originalPrice)} → 用码参考{' '}
+                      {formatYuan(regularMonthly.originalPrice * (c.discountMultiplier ?? 1))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div class="mt-4 flex gap-2">
+                <a href={`/brands/${b.slug}/`} class="btn-magic-secondary flex-1 text-xs">查看全套餐表</a>
+                <a href={b.affLink} target="_blank" rel="sponsored nofollow noopener noreferrer" class="btn-magic-primary flex-1 text-xs">
+                  前往官网 ↗
+                </a>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. 新手魔法课堂（三阶段阅读路径） -->
+  <section class="bg-magic-knowledge border-b border-[#E2E8F0] py-12 sm:py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div>
+          <span class="inline-flex rounded-full bg-[#F5C9E5]/70 px-3 py-1 text-xs font-bold text-[#252D49]">
+            零基础学习路线
+          </span>
+          <h2 class="mt-2 text-2xl font-bold text-[#252D49] sm:text-3xl">
+            新手魔法课堂：三阶段系统掌握网络工具与配置
+          </h2>
+          <p class="mt-2 text-sm text-[#64748B]">
+            全部课程与知识库文档完全开放阅读，无需注册或解锁前置任务，按阶段顺序阅读即可由浅入深建立知识体系。
+          </p>
+
+          <div class="mt-6 grid gap-4 sm:grid-cols-3">
+            <div class="magic-card p-5">
+              <div class="text-xs font-bold text-[#7664D9]">STAGE 01 · 基础概念</div>
+              <h3 class="mt-1 text-base font-bold text-[#252D49]">梯子、协议与订阅</h3>
+              <ul class="mt-2.5 space-y-1.5 text-xs text-[#334155]">
+                <li><a href="/knowledge/what-is-ladder/" class="hover:text-[#5B48C4] hover:underline">• 梯子与魔法上网是什么？</a></li>
+                <li><a href="/knowledge/proxy-protocols-explained/" class="hover:text-[#5B48C4] hover:underline">• SS/VLESS/Trojan 协议科普</a></li>
+                <li><a href="/knowledge/what-is-subscription-link/" class="hover:text-[#5B48C4] hover:underline">• 订阅链接工作原理</a></li>
+                <li><a href="/knowledge/client-vs-provider/" class="hover:text-[#5B48C4] hover:underline">• 客户端与服务商职责边界</a></li>
+              </ul>
+            </div>
+
+            <div class="magic-card p-5">
+              <div class="text-xs font-bold text-[#7664D9]">STAGE 02 · 设备与工具</div>
+              <h3 class="mt-1 text-base font-bold text-[#252D49]">客户端选择与校验</h3>
+              <ul class="mt-2.5 space-y-1.5 text-xs text-[#334155]">
+                <li><a href="/knowledge/windows-clients-guide/" class="hover:text-[#5B48C4] hover:underline">• Windows 客户端选型</a></li>
+                <li><a href="/knowledge/ios-clients-guide/" class="hover:text-[#5B48C4] hover:underline">• iOS 小火箭与 Nextin</a></li>
+                <li><a href="/knowledge/android-clients-guide/" class="hover:text-[#5B48C4] hover:underline">• Android 客户端与 APK</a></li>
+                <li><a href="/knowledge/how-to-verify-official-downloads/" class="hover:text-[#5B48C4] hover:underline">• 安全获取开源安装文件</a></li>
+              </ul>
+            </div>
+
+            <div class="magic-card p-5">
+              <div class="text-xs font-bold text-[#7664D9]">STAGE 03 · 配置与排查</div>
+              <h3 class="mt-1 text-base font-bold text-[#252D49]">分流、DNS 与防泄露</h3>
+              <ul class="mt-2.5 space-y-1.5 text-xs text-[#334155]">
+                <li><a href="/clash/modes/" class="hover:text-[#5B48C4] hover:underline">• Rule / Global / Direct 模式</a></li>
+                <li><a href="/clash/tun/" class="hover:text-[#5B48C4] hover:underline">• TUN 虚拟网卡与服务模式</a></li>
+                <li><a href="/knowledge/dns-and-fake-ip-basics/" class="hover:text-[#5B48C4] hover:underline">• DNS 与 Fake-IP 基础</a></li>
+                <li><a href="/knowledge/subscription-leak-risks/" class="hover:text-[#5B48C4] hover:underline">• 订阅泄露风险与止损</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="overflow-hidden rounded-3xl border border-white bg-white/90 p-3 shadow-md">
+          <img
+            src="/illustrations/academy-library-mage.webp"
+            alt="魔法知识图书馆二次元少女阅读魔法典籍插画"
+            width="760"
+            height="570"
+            loading="lazy"
+            class="h-auto w-full rounded-2xl object-cover"
+          />
+          <div class="p-3 text-center">
+            <a href="/knowledge/" class="btn-magic-primary w-full text-sm">
+              进入魔法知识图书馆 →
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. 品牌深度文章 & 12. 魔法知识百科 -->
+  <section class="bg-magic-articles border-b border-[#E2E8F0] py-12 sm:py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="grid gap-10 lg:grid-cols-2">
+        <!-- 11. 品牌深度文章 -->
+        <div>
+          <div class="flex items-center justify-between gap-2">
+            <h2 class="text-2xl font-bold text-[#252D49]">品牌深度专题文章</h2>
+            <a href="/articles/" class="text-sm font-semibold text-[#5B48C4] hover:underline">全部专题 →</a>
+          </div>
+          <div class="mt-5 space-y-3">
+            {articles.map((art) => (
+              <a href={`/articles/${art.id}/`} class="magic-card block p-4">
+                <div class="flex items-center justify-between gap-2 text-xs text-[#64748B]">
+                  <span class="rounded-full bg-[#F0EBFF] px-2.5 py-0.5 font-semibold text-[#5B48C4]">
+                    {art.data.category}
+                  </span>
+                  <span>更新：{art.data.updatedDate}</span>
+                </div>
+                <h3 class="mt-2 text-base font-bold text-[#252D49]">{art.data.title}</h3>
+                <p class="mt-1 line-clamp-2 text-xs leading-relaxed text-[#64748B]">{art.data.description}</p>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <!-- 12. 魔法知识百科 -->
+        <div>
+          <div class="flex items-center justify-between gap-2">
+            <h2 class="text-2xl font-bold text-[#252D49]">魔法知识百科精选</h2>
+            <a href="/knowledge/" class="text-sm font-semibold text-[#5B48C4] hover:underline">知识全库 →</a>
+          </div>
+          <div class="mt-5 grid gap-3 sm:grid-cols-2">
+            {knowledgeEntries.map((item) => (
+              <a href={`/knowledge/${item.id}/`} class="magic-card flex flex-col justify-between p-4">
+                <div>
+                  <span class="text-[11px] font-bold text-[#7664D9]">{item.data.category}</span>
+                  <h3 class="mt-1 text-sm font-bold leading-snug text-[#252D49]">{item.data.title}</h3>
+                </div>
+                <span class="mt-3 text-xs font-semibold text-[#5B48C4]">阅读百科 →</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13. 常见问题 FAQ -->
+  <section class="bg-white py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <span class="inline-flex rounded-full bg-[#F0EBFF] px-3 py-1 text-xs font-bold text-[#5B48C4]">
+          FAQ 常见疑问解答
+        </span>
+        <h2 class="mt-2 text-2xl font-bold text-[#252D49] sm:text-3xl">
+          梯子推荐与客户端使用高频问题
+        </h2>
+        <p class="mt-2 text-sm text-[#64748B]">
+          汇集新手最常混淆的基础概念、订阅政策差异与安全使用提醒。
+        </p>
+      </div>
+
+      <div class="mt-8">
+        <FaqAccordion items={homeFaqs} />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
